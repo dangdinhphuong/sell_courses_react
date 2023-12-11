@@ -1,0 +1,329 @@
+[33mcommit 9a4243b236461591ffcc4018a582807b057b8026[m[33m ([m[1;36mHEAD -> [m[1;32mdevelopes[m[33m, [m[1;31morigin/developes[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: 0d314b9 6b983aa
+Author: giangcoi20265 <117899065+giangcoi20265@users.noreply.github.com>
+Date:   Thu Aug 31 15:25:28 2023 +0700
+
+    Merge pull request #24 from sonht12/feat/fixhome
+    
+    feat/fixhome
+
+[33mcommit 6b983aa184ad0be6a09e4b9957324495f477ec94[m[33m ([m[1;31morigin/feat/fixhome[m[33m, [m[1;32mfeat/fixhome[m[33m)[m
+Author: giangcoi <gtcoi0363@gmail.com>
+Date:   Thu Aug 31 15:24:48 2023 +0700
+
+    feat/fixhome
+
+[33mcommit 0d314b9005173f881ee698c1b3733f57ea899987[m
+Merge: 3bbbce5 894f2e9
+Author: OgeiV <102569187+duyanh66@users.noreply.github.com>
+Date:   Thu Aug 31 14:52:58 2023 +0700
+
+    Merge pull request #23 from sonht12/feat/update-frontend-client-1-refs-BKH-20
+    
+    feat/update-frontend-client-1-refs-BKH-20
+
+[33mcommit 894f2e94054526d4a3889ef61199bacc3fc5594e[m
+Author: duyanh66 <ngduyanh1512@gmail.com>
+Date:   Thu Aug 31 14:52:29 2023 +0700
+
+    feat/update-frontend-client-1-refs-BKH-20
+
+[33mcommit 3bbbce5b95bbe0915d56e789a798e3cb87425a47[m[33m ([m[1;32mfeat/fix-home[m[33m)[m
+Merge: df31c53 9bdb8bb
+Author: giangcoi20265 <117899065+giangcoi20265@users.noreply.github.com>
+Date:   Wed Aug 30 16:51:13 2023 +0700
+
+    Merge pull request #22 from sonht12/fix/test2-refs-BKH-12
+    
+    fix/test2-refs-BKH-12
+
+[33mcommit 9bdb8bb56efea4790ea6ffa3b4355cc3368c18c8[m[33m ([m[1;31morigin/fix/test2-refs-BKH-12[m[33m, [m[1;32mfix/test2-refs-BKH-12[m[33m)[m
+Author: giangcoi <gtcoi0363@gmail.com>
+Date:   Wed Aug 30 16:50:29 2023 +0700
+
+    fix/test2-refs-BKH-12
+
+[33mcommit df31c53561a8951d8fc751b979d6a10e6705314d[m[33m ([m[1;32mfix/test2[m[33m)[m
+Merge: a4f601f a03a177
+Author: giangcoi20265 <117899065+giangcoi20265@users.noreply.github.com>
+Date:   Wed Aug 30 14:56:04 2023 +0700
+
+    Merge pull request #21 from sonht12/fix/test2
+    
+    fix/test
+
+[33mcommit a03a177be8189fc41af5e1f35ae35287bc58727f[m[33m ([m[1;31morigin/fix/test2[m[33m)[m
+Author: giangcoi <gtcoi0363@gmail.com>
+Date:   Wed Aug 30 14:55:21 2023 +0700
+
+    fix/test
+
+[33mcommit a4f601f049636ff0a07aedd88a41b5a7a61d6254[m
+Merge: e25bf03 e3f1b3f
+Author: giangcoi20265 <117899065+giangcoi20265@users.noreply.github.com>
+Date:   Wed Aug 30 14:41:57 2023 +0700
+
+    Merge pull request #20 from sonht12/fix/test-again
+    
+    fix/test-agin
+
+[33mcommit e3f1b3fbc562d0871ae9db7bc6920892c6f9175c[m[33m ([m[1;31morigin/fix/test-again[m[33m, [m[1;32mfix/test-again[m[33m)[m
+Author: giangcoi <gtcoi0363@gmail.com>
+Date:   Wed Aug 30 14:41:17 2023 +0700
+
+    fix/test-agin
+
+[33mcommit e25bf0371153b601fb93f95cd81b5de8a31f1990[m
+Merge: 44fc584 c0cc8cc
+Author: giangcoi20265 <117899065+giangcoi20265@users.noreply.github.com>
+Date:   Wed Aug 30 13:57:53 2023 +0700
+
+    Merge pull request #19 from sonht12/fix/admin
+    
+    update
+
+[33mcommit c0cc8cc5709cc25d2ac28a567b1c0c6d0ec4f50c[m
+Merge: 350cdb5 44fc584
+Author: sonht12 <134500490+sonht12@users.noreply.github.com>
+Date:   Wed Aug 30 13:56:50 2023 +0700
+
+    Merge branch 'developes' into fix/admin
+
+[33mcommit 350cdb5941c6c0db3e6b84323bf50ad09b6d68b7[m[33m ([m[1;31morigin/fix/admin[m[33m, [m[1;32mfix/admin[m[33m)[m
+Author: giangcoi <gtcoi0363@gmail.com>
+Date:   Wed Aug 30 13:50:47 2023 +0700
+
+    update
+
+[33mcommit 44fc584aa854c809876ed67156eb2747d3aa64e4[m
+Merge: dd1c226 0df54a5
+Author: giangcoi20265 <117899065+giangcoi20265@users.noreply.github.com>
+Date:   Wed Aug 30 11:50:39 2023 +0700
+
+    Merge pull request #18 from sonht12/revert-17-feat/fix-admin-refs-BKH-12
+    
+    Revert "fix admin"
+
+[33mcommit 0df54a5b2f5954427f8c4ae50aed0fcc4688cc26[m[33m ([m[1;31morigin/revert-17-feat/fix-admin-refs-BKH-12[m[33m)[m
+Author: giangcoi20265 <117899065+giangcoi20265@users.noreply.github.com>
+Date:   Wed Aug 30 11:47:52 2023 +0700
+
+    Revert "fix admin"
+
+[33mcommit dd1c2266776b739525c8757633b5acc2a59ef990[m
+Merge: 557a7b4 103fc40
+Author: giangcoi20265 <117899065+giangcoi20265@users.noreply.github.com>
+Date:   Wed Aug 30 11:47:39 2023 +0700
+
+    Merge pull request #17 from sonht12/feat/fix-admin-refs-BKH-12
+    
+    fix admin
+
+[33mcommit 103fc40e0525a1ee52985e23555e5cc410e353ab[m[33m ([m[1;31morigin/fix/again-test[m[33m, [m[1;31morigin/feat/fix-admin-refs-BKH-12[m[33m, [m[1;32mfix/again-test[m[33m)[m
+Merge: d6d9f32 557a7b4
+Author: giangcoi20265 <117899065+giangcoi20265@users.noreply.github.com>
+Date:   Wed Aug 30 11:06:32 2023 +0700
+
+    Merge branch 'developes' into feat/fix-admin-refs-BKH-12
+
+[33mcommit d6d9f3288c0d6414b2100b51fc7b1ee019f7024c[m
+Author: giangcoi <gtcoi0363@gmail.com>
+Date:   Wed Aug 30 10:43:15 2023 +0700
+
+    fix admin
+
+[33mcommit 557a7b49806f262b3da19a9f35954abf7772d66c[m[33m ([m[1;31morigin/main[m[33m)[m
+Merge: b2b84fd 4176618
+Author: giangcoi20265 <117899065+giangcoi20265@users.noreply.github.com>
+Date:   Wed Aug 30 10:11:20 2023 +0700
+
+    Merge pull request #16 from sonht12/revert-15-feat/detail-refs-BKH-12
+    
+    Revert "feat/fix-edit"
+
+[33mcommit 41766189f3268fa95b44265b975ff4e758e8f705[m[33m ([m[1;31morigin/revert-15-feat/detail-refs-BKH-12[m[33m)[m
+Author: giangcoi20265 <117899065+giangcoi20265@users.noreply.github.com>
+Date:   Wed Aug 30 10:10:44 2023 +0700
+
+    Revert "feat/fix-edit"
+
+[33mcommit b2b84fd89a9171c9dd284682bd31ca3f56c7fd27[m
+Merge: 6f26f09 a99fe52
+Author: giangcoi20265 <117899065+giangcoi20265@users.noreply.github.com>
+Date:   Wed Aug 30 10:10:12 2023 +0700
+
+    Merge pull request #15 from sonht12/feat/detail-refs-BKH-12
+    
+    feat/fix-edit
+
+[33mcommit a99fe520600854fbecdbe95b0ee238d98cc065f2[m[33m ([m[1;31morigin/feat/detail-refs-BKH-12[m[33m)[m
+Author: giangcoi <gtcoi0363@gmail.com>
+Date:   Wed Aug 30 10:01:04 2023 +0700
+
+    feat/fix-edit
+
+[33mcommit 6f26f0995dfd11a74f451313993fe4f80dec75b2[m
+Author: duyanh66 <ngduyanh1512@gmail.com>
+Date:   Wed Aug 23 00:55:25 2023 +0700
+
+    Update giao diện SingIn-Up
+
+[33mcommit 39ca7868e4c2d43a8bc63096f2d6b981c890342e[m
+Author: duyanh66 <ngduyanh1512@gmail.com>
+Date:   Sun Aug 13 02:31:22 2023 +0700
+
+    Animate button
+
+[33mcommit a7345ef14ddc94ab6cadb36d187e623844856fec[m
+Merge: 7e80c8b 7d12662
+Author: sonht12 <134500490+sonht12@users.noreply.github.com>
+Date:   Tue Aug 8 04:53:30 2023 +0700
+
+    Merge pull request #14 from sonht12/feat/Login-refs-BKH-17
+    
+    feat/Login-refs-BKH-17
+
+[33mcommit 7d126629adc9138c5899f4bead94bbb76b172235[m
+Author: sonht12 <son0379878379@gmail.com>
+Date:   Tue Aug 8 04:52:59 2023 +0700
+
+    feat/Login-refs-BKH-17
+
+[33mcommit 7e80c8b6bac10c5a9b7908826b932099ce67d28a[m
+Merge: 317fe11 fe075d1
+Author: OgeiV <102569187+duyanh66@users.noreply.github.com>
+Date:   Mon Aug 7 23:41:39 2023 +0700
+
+    Merge pull request #12 from sonht12/feat/px-py-refs-BKH-15
+    
+    feat/px-py-refs-BKH-15
+
+[33mcommit fe075d11ada653292ae4d5a1c1e8dc15165e6416[m
+Author: duyanh66 <ngduyanh1512@gmail.com>
+Date:   Mon Aug 7 23:41:11 2023 +0700
+
+    feat/px-py-refs-BKH-15
+
+[33mcommit 317fe1106c4752eac34a30ab658a582275d7384d[m
+Merge: 0f78f77 a2accbd
+Author: truongbqph24877 <97102695+truong20033002@users.noreply.github.com>
+Date:   Mon Aug 7 23:25:46 2023 +0700
+
+    Merge pull request #11 from sonht12/feat/Validate-form-fefs-BKH-14
+    
+    feat/Validate form-fefs:BKH-14
+
+[33mcommit a2accbdc8ec90ebff51ebab16315b345685db6e8[m
+Author: truongbqph24877 <97102695+truong20033002@users.noreply.github.com>
+Date:   Mon Aug 7 23:25:09 2023 +0700
+
+    feat/Validate form-fefs:BKH-14
+
+[33mcommit 0f78f77427b689eaf39aae655755c968dd344e42[m
+Author: truongbqph24877 <97102695+truong20033002@users.noreply.github.com>
+Date:   Mon Aug 7 21:53:58 2023 +0700
+
+    fix lỗi edit_product
+
+[33mcommit dc88a5cbd194bc459e64eccff79f235534176b87[m
+Merge: ce9c055 6ede9fc
+Author: truongbqph24877 <97102695+truong20033002@users.noreply.github.com>
+Date:   Mon Aug 7 21:37:08 2023 +0700
+
+    Merge pull request #10 from sonht12/feat/detail-refs-BKH-12
+    
+    Feat/detail refs bkh 12
+
+[33mcommit 6ede9fca89e40e979b3787abfcb67e9f324b3323[m
+Merge: 8947e98 ce9c055
+Author: truongbqph24877 <97102695+truong20033002@users.noreply.github.com>
+Date:   Mon Aug 7 21:36:54 2023 +0700
+
+    Merge branch 'developes' into feat/detail-refs-BKH-12
+
+[33mcommit 8947e98aebc2e640c77c78680ce81d1c7a515f00[m
+Author: giangcoi <gtcoi0363@gmail.com>
+Date:   Mon Aug 7 21:17:53 2023 +0700
+
+    giang
+
+[33mcommit d753512e160e1a2f21597fbe4b2709d0907a7189[m
+Author: giangcoi <gtcoi0363@gmail.com>
+Date:   Mon Aug 7 21:11:18 2023 +0700
+
+    feat/detail-refs-BKH-12
+
+[33mcommit ce9c055f00f41c8ae39b08d871b09a58e7041798[m
+Merge: 13919e2 87b9f59
+Author: truongbqph24877 <97102695+truong20033002@users.noreply.github.com>
+Date:   Mon Aug 7 20:44:51 2023 +0700
+
+    Merge pull request #8 from sonht12/feat/Cập-nhật-Admin-refs-BKH-13
+    
+    feat/Cập nhật Admin-refs:BKH-13
+
+[33mcommit 87b9f59d09207668d3389e8c1b62e8640cbdf7bf[m
+Author: truongbqph24877 <97102695+truong20033002@users.noreply.github.com>
+Date:   Mon Aug 7 20:43:55 2023 +0700
+
+    feat/Cập nhật Admin-refs:BKH-13
+
+[33mcommit 13919e2721f6fa430829c9ce3a485f63fa880b08[m
+Author: truongbqph24877 <97102695+truong20033002@users.noreply.github.com>
+Date:   Sun Aug 6 23:38:09 2023 +0700
+
+    update-truong
+
+[33mcommit 34ba2809529722d2dbe8c0cf31bcd142d650b9f9[m
+Merge: cab7baa 9e8e09e
+Author: truongbqph24877 <97102695+truong20033002@users.noreply.github.com>
+Date:   Sun Aug 6 19:55:58 2023 +0700
+
+    Merge pull request #7 from sonht12/feat/CRUD_Category-refs-BKH-10
+    
+    feat/CRUD_Category-refs-BKH-10
+
+[33mcommit 9e8e09e96cd1969b63c68190c4229a1e1ddd3cfb[m
+Author: truongbqph24877 <97102695+truong20033002@users.noreply.github.com>
+Date:   Sun Aug 6 19:55:17 2023 +0700
+
+    feat/CRUD_Category-refs-BKH-10
+
+[33mcommit cab7baa381e1a91a2d8ea957f3e41e9bb92c7e75[m
+Merge: 8594914 a5e2428
+Author: OgeiV <102569187+duyanh66@users.noreply.github.com>
+Date:   Sat Aug 5 21:51:15 2023 +0700
+
+    Merge pull request #5 from sonht12/feat/giaodienSignInSignUp-refs-BKH-8
+    
+    feat/giaodienSignInSignUp-refs-BKH-8
+
+[33mcommit a5e242839fbd20c5c0b307064735c28f2044c11e[m
+Author: duyanh66 <ngduyanh1512@gmail.com>
+Date:   Sat Aug 5 21:50:44 2023 +0700
+
+    feat/giaodienSignInSignUp-refs-BKH-8
+
+[33mcommit 8594914fec49408a48a43e22d61d18ab7a4edbf7[m
+Merge: 75a61b5 2d25c05
+Author: truongbqph24877 <97102695+truong20033002@users.noreply.github.com>
+Date:   Sat Aug 5 20:03:59 2023 +0700
+
+    Merge pull request #4 from sonht12/feat/ket_noi_du_lieu-rets-BKH-7
+    
+    feat/ket_noi_du_llieu-rets-BKH_7
+
+[33mcommit 2d25c0547415a166a7efbd4bff81dfafd5889f48[m
+Author: truongbqph24877 <97102695+truong20033002@users.noreply.github.com>
+Date:   Sat Aug 5 20:03:24 2023 +0700
+
+    feat/ket_noi_du_llieu-rets-BKH_7
+
+[33mcommit 75a61b583e7421557746ac8bd493100b54050688[m
+Merge: ec8b823 ccf1a2f
+Author: OgeiV <102569187+duyanh66@users.noreply.github.com>
+Date:   Fri Aug 4 23:53:25 2023 +0700
+
+    Merge pull request #3 from sonht12/feat/giaodienclient-refs-BKH-6
+    
+    feat/giaodienclient-refs-BKH-6
