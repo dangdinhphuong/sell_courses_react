@@ -12,9 +12,9 @@ import { useGetProductByIdQuery } from "@/Api/productApi";
 import { Lesson } from "@/interface/lessons";
 import { useGetLessonByIdQuery } from "@/Api/lesson";
 import { RaceBy } from '@uiball/loaders'
-import {IoCloseOutline} from 'react-icons/io5'
+import { IoCloseOutline } from 'react-icons/io5'
 import confetti from "canvas-confetti";
-import { Modal, Button, Rate ,Input} from "antd";
+import { Modal, Button, Rate, Input } from "antd";
 import { useAddRatingMutation } from "@/Api/ratingApi";
 import { useGetCourseprogressByIdQuery, useUpdateCourseprogressMutation } from "@/Api/CourseProgress";
 import { IRating } from "@/interface/rating";
@@ -56,7 +56,7 @@ const Lesson_video = () => {
         .then(() => {
           refetchCourseProgress();
         })
-        
+
     }
   }, [progress, completedLessonCount, id, updateScore, refetchCourseProgress]);
   // cập nhật trạng thái hoàn thành trong bài học
@@ -74,8 +74,8 @@ const Lesson_video = () => {
 
   // Lấy trạng thái cho lessonId cụ thể
   const scoreData = Courseprogress?.data
-  ? findScoreByLessonId(lessonIdToFind, Courseprogress.data.scores)
-  : null;
+    ? findScoreByLessonId(lessonIdToFind, Courseprogress.data.scores)
+    : null;
   const addRatingMutation = useAddRatingMutation();
   const handleFeedbackChange = (event) => {
     setFeedback(event.target.value);
@@ -120,7 +120,7 @@ const Lesson_video = () => {
       return Math.random() * (max - min) + min;
     }
 
-    const interval:any = setInterval(function () {
+    const interval: any = setInterval(function () {
       const timeLeft = animationEnd - Date.now();
 
       if (timeLeft <= 0) {
@@ -135,7 +135,7 @@ const Lesson_video = () => {
     }, 250);
   }
   useEffect(() => {
-    if (percentageCompleted === 100 ) {
+    if (percentageCompleted === 100) {
       setModalVisible(true);
       startConfettiAnimation(); // Bắt đầu hiệu ứng confetti
     } else {
@@ -183,8 +183,8 @@ const Lesson_video = () => {
     <>
       <div className="bg-[#D2E6E4]">
         <div className="pt-[88px]">
-        <div className="lg:flex lg:flex-row-reverse bg-white lg:px-10 px-2 pt-10 lg:p-10 gap-8 h-[1500px] mb-[800px] ">
-            
+          <div className="lg:flex lg:flex-row-reverse bg-white lg:px-10 px-2 pt-10 lg:p-10 gap-8 h-[1500px] mb-[800px] ">
+
 
             {/* Danh sách video chưa được chiếu */}
             <div className="lg:w-2/5 p-8">
@@ -230,9 +230,8 @@ const Lesson_video = () => {
                   return (
                     <div
                       key={index}
-                      className={`learn-item-1 bg-white p-4 rounded-md shadow-md border-2 mt-4 ${
-                        isCompleted ? "completed" : ""
-                      } ${isInProgress ? "in-progress" : ""}`}
+                      className={`learn-item-1 bg-white p-4 rounded-md shadow-md border-2 mt-4 ${isCompleted ? "completed" : ""
+                        } ${isInProgress ? "in-progress" : ""}`}
                     >
                       <Link
                         to={`lesson/${lesson._id}/${idUser}`}
@@ -250,29 +249,29 @@ const Lesson_video = () => {
                           </p>
                         </div>
                         <div className="flex justify-between items-center ">
-                        <div className="mt-2 flex items-center">
-                          {isCompleted ? (
-                            <>
-                              <BsFillCheckCircleFill className="text-green-500 mr-2" />
-                              <span className="text-green-500">Hoàn thành</span>
-                            </>
-                          ) : isInProgress ? (
-                            <>
-                              <BsFillExclamationSquareFill className="text-orange-500 mr-2" />
-                              <span className="text-orange-500">Đang học</span>
-                            </>
-                          ) : (
-                            <>
-                              <BsFillExclamationSquareFill className="text-orange-500 mr-2" />
-                              <span className="text-orange-500">
-                                Chưa hoàn thành
-                              </span>
-                            </>
-                          )}
+                          <div className="mt-2 flex items-center">
+                            {isCompleted ? (
+                              <>
+                                <BsFillCheckCircleFill className="text-green-500 mr-2" />
+                                <span className="text-green-500">Hoàn thành</span>
+                              </>
+                            ) : isInProgress ? (
+                              <>
+                                <BsFillExclamationSquareFill className="text-orange-500 mr-2" />
+                                <span className="text-orange-500">Đang học</span>
+                              </>
+                            ) : (
+                              <>
+                                <BsFillExclamationSquareFill className="text-orange-500 mr-2" />
+                                <span className="text-orange-500">
+                                  Chưa hoàn thành
+                                </span>
+                              </>
+                            )}
+                          </div>
+
                         </div>
-                        
-                        </div>
-                        
+
                       </Link>
                     </div>
                   );
@@ -294,7 +293,7 @@ const Lesson_video = () => {
         onCancel={() => setModalVisible(false)}
         footer={null}
         maskClosable={false}
-        // closable={false}
+      // closable={false}
       >
         <div className="">
           <div className="w-14 flex justify-center">
@@ -313,24 +312,24 @@ const Lesson_video = () => {
           />
           <div className="">
             <h4 className="my-2 text-sm">Góp ý và nhận xét</h4>
-            <TextArea rows={6} value={feedback} onChange={handleFeedbackChange}/>
+            <TextArea rows={6} value={feedback} onChange={handleFeedbackChange} />
           </div>
           <div className="flex justify-between mt-3">
-          <span className="text-xs flex">Bấm vào icon <IoCloseOutline className='text-base bg-gradient-to-r from-purple-500 to-pink-500 mr-1 ml-1 '/> nếu đã đánh giá</span>
-          <button
-            onClick={handleSendRating}
-            className="px-5 py-2 text-white rounded-md transition duration-300
+            <span className="text-xs flex">Bấm vào icon <IoCloseOutline className='text-base bg-gradient-to-r from-purple-500 to-pink-500 mr-1 ml-1 ' /> nếu đã đánh giá</span>
+            <button
+              onClick={handleSendRating}
+              className="px-5 py-2 text-white rounded-md transition duration-300
           bg-gradient-to-r from-[#96deda] to-[#50c9c3] hover:bg-gradient-to-r
           hover:from-[#B7F8DB] hover:to-[#50A7C2] hover:rounded-full font-medium"
-            style={{
-              backgroundColor: "transparent" /* Đặt màu nền trong suốt */,
-              color: "#f6f7f9" /* Mã màu phông */,
-              borderRadius: "18px" /* Góc bo tròn ban đầu */,
-              fontSize:"16px"
-            }}
-          >
-            Send
-          </button>
+              style={{
+                backgroundColor: "transparent" /* Đặt màu nền trong suốt */,
+                color: "#f6f7f9" /* Mã màu phông */,
+                borderRadius: "18px" /* Góc bo tròn ban đầu */,
+                fontSize: "16px"
+              }}
+            >
+              Send
+            </button>
           </div>
 
         </div>
