@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { Outlet } from "react-router-dom";
 import { useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -28,7 +28,6 @@ const Lesson_video = () => {
   const { idProduct } = useParams<{ idProduct: string }>();
   const { idLesson } = useParams<{ idLesson: string }>();
   const { data: lessonData } = useGetLessonByIdQuery(idLesson || "");
-  console.log("lessonData", lessonData);
 
   const { data: productData, isLoading: productIsLoading } = useGetProductByIdQuery(idProduct || "");
   const [isLoading, setIsLoading] = useState(true);
@@ -43,8 +42,10 @@ const Lesson_video = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [rating, setRating] = useState(0); // Đánh giá ban đầu là 0
   const [feedback, setFeedback] = useState('');
-  const [videoDurations, setVideoDurations] = useState([]);
-
+  const [totalDuration, setTotalDuration] = useState(0);
+  const [isActiveLesson, setIsActiveLesson] = useState(idLesson
+  )
+  const [durationTime, setDurationTime] = useState([]);
   const [addScore] = useAddScoreMutation();
   // if (!productData) {
   //   return <div>No data found for this product.</div>;
@@ -52,7 +53,6 @@ const Lesson_video = () => {
   // Tính toán số lượng bài học đã hoàn thành
   const completedLessonCount = Courseprogress?.data.progress || 0;
   // Sử dụng hook để lấy giá trị ScoreForprogress
-  console.log("Courseprogress _ Courseprogress", Courseprogress);
 
   const { data: ScoreForprogress } = useGetScoreForprogressQuery(
     Courseprogress?.data?.scores[0]?.progressId
@@ -145,6 +145,16 @@ const Lesson_video = () => {
       confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
     }, 250);
   }
+  const formatTime = (seconds: any) => {
+    if (!seconds) return
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+
+    return `${formattedMinutes}:${formattedSeconds}`;
+  }
   useEffect(() => {
     if (percentageCompleted === 100) {
       setModalVisible(true);
@@ -153,7 +163,47 @@ const Lesson_video = () => {
       setModalVisible(false);
     }
   }, [percentageCompleted]);
+  useEffect(() => {
+    let mounted = true;
+    let total = 0;
 
+    console.log("lessons", lessons);
+
+    const calculateTotalDuration = async () => {
+
+      // Lặp qua danh sách video và lấy thời lượng từng video
+      for (const lesson of lessons) {
+        try {
+          const video = document.createElement('video');
+          video.src = lesson.video;
+          video.addEventListener('loadedmetadata', () => {
+            total += video.duration;
+
+            // Cập nhật state chỉ khi component được mount
+            if (mounted) {
+              setDurationTime(prev => [...prev, video.duration])
+              setTotalDuration(total);
+            }
+          });
+          await video.load();
+        } catch (error) {
+          console.error('Error calculating video duration:', error);
+        }
+      }
+      console.log("total_______", total);
+
+      // Cập nhật state chỉ khi component được mount
+      if (mounted) {
+        setTotalDuration(total);
+      }
+    };
+    calculateTotalDuration();
+
+    // Cleanup để tránh memory leaks
+    return () => {
+      mounted = false;
+    };
+  }, [lessons]);
 
   // if (isLoading) {
   //   return  <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white">
@@ -190,6 +240,7 @@ const Lesson_video = () => {
         return
       }
     }
+    setIsActiveLesson(lesson._id)
     const lessonId = lesson._id;
     const lessonName = lesson.name;
     const progressId = Courseprogress?.data?._id;
@@ -216,16 +267,44 @@ const Lesson_video = () => {
     }
     navigate(`lesson/${lesson._id}/${idUser}`)
   };
-  const formatTime = (seconds: any) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
 
-    const formattedMinutes = String(minutes).padStart(2, '0');
-    const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+  const VideoPlayer = ({ videoUrl: any }) => {
+    if (!videoUrl) return;
+    const formatTime = (seconds: any) => {
+      if (!seconds) return
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = Math.floor(seconds % 60);
 
-    return `${formattedMinutes}:${formattedSeconds}`;
-  }
+      const formattedMinutes = String(minutes).padStart(2, '0');
+      const formattedSeconds = String(remainingSeconds).padStart(2, '0');
 
+      return `${formattedMinutes}:${formattedSeconds}`;
+    }
+    const videoRef = useRef(null);
+    const [durationTime, setDurationTime] = useState(0);
+
+    const handleLoadedMetadata = () => {
+      const duration = formatTime(videoRef.current.duration);
+      setDurationTime(duration)
+
+    };
+
+
+    return (
+      <div>
+        <video
+          ref={videoRef}
+          width="0"
+          height="0"
+          onLoadedMetadata={handleLoadedMetadata}
+        >
+          <source src={videoUrl} type="video/mp4" />
+        </video>
+
+        <p> {durationTime} </p>
+      </div>
+    );
+  };
   return (
     <>
       <div className="bg-[#D2E6E4]">
@@ -244,7 +323,7 @@ const Lesson_video = () => {
                     1. IIFE, Scope, Closure
                   </h3>
                   <span className="text-gray-500">
-                    {completedLessonCount}/{lessons.length} | 01:46:21
+                    {completedLessonCount}/{lessons.length} | {formatTime(totalDuration)}
                     <span className="text-green-500">
                       {" "}
                       ({percentageCompleted}% hoàn thành)
@@ -278,7 +357,7 @@ const Lesson_video = () => {
                     <div
                       key={index}
                       className={`learn-item-1 bg-white p-4 rounded-md shadow-md border-2 mt-4 ${isCompleted ? "completed" : ""
-                        } ${isInProgress ? "in-progress" : ""}`}
+                        } ${isInProgress ? "in-progress" : ""} ${isActiveLesson === lesson._id ? "border-2 border-[#50c9c3]" : ''}`}
                     >
                       <div
 
@@ -291,7 +370,9 @@ const Lesson_video = () => {
                           </h3>
                           <p className="flex items-center space-x-1 text-gray-600">
                             <BsAlarm />
-                            <span>  01:48 </span>
+                            <span>
+                              {formatTime(durationTime[index])}
+                            </span>
                           </p>
                         </div>
                         <div className="flex justify-between items-center ">

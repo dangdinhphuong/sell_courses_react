@@ -315,7 +315,6 @@ function Videodetail() {
   const scoreData = Courseprogress
     ? findScoreByLessonId(lessonIdToFind, Courseprogress?.data?.scores)
     : null;
-  console.log("scoreData_________", scoreData);
 
   //sửa lý lấy thời gian video
   const [currentTime, setCurrentTime] = useState(0);
@@ -364,19 +363,18 @@ function Videodetail() {
   // });
 
   const handleTimeUpdate = (event) => {
-    let idintervel = null
+    // let idintervel = null
     const video = event.target;
     const progress = (video.currentTime / video.duration) * 100;
-    console.log(video.duration);
-    if (!idintervel) {
-      idintervel = setTimeout(() => {
-        clearInterval(idintervel)
-      }, video.duration * 1000)
-      if (idintervel) {
-        video.currentTime <= 
-      }
+    // if (!idintervel) {
+    //   idintervel = setTimeout(() => {
+    //     clearInterval(idintervel)
+    //   }, video.duration * 1000)
+    //   if (idintervel) {
+    //     video.currentTime <= 
+    //   }
 
-    }
+    // }
     // Lưu thời điểm hiện tại để so sánh lần sau
     if (progress >= 90 && !reached90PercentRef) {
       setReached90PercentRef(true);
@@ -659,6 +657,7 @@ function Videodetail() {
             ref={videoRef}
             key={videoSourceUrl}
             onSeeking={handleSeeking}
+            onSeeked={handleSeeked}
             onTimeUpdate={handleTimeUpdate}
             controls
             width="100%"
