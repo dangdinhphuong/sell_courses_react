@@ -208,9 +208,7 @@ function Videodetail() {
   const [addScore] = useAddScoreMutation();
   const [updateStatus] = useUpdateStatusMutation();
   const videoSourceUrl = lessonData?.data.video || "";
-  const openModal = () => {
-    setOpenTestModal(true);
-  };
+
 
   // Hàm xáo trộn một mảng
   function shuffleArray(array: any) {
@@ -317,90 +315,106 @@ function Videodetail() {
   const scoreData = Courseprogress
     ? findScoreByLessonId(lessonIdToFind, Courseprogress?.data?.scores)
     : null;
+  console.log("scoreData_________", scoreData);
+
   //sửa lý lấy thời gian video
   const [currentTime, setCurrentTime] = useState(0);
   const [reached90PercentRef, setReached90PercentRef] = useState(false);
   const idScore = scoreData?._id;
 
-  useEffect(() => {
-    const video = document.querySelector("video");
-    if (video) {
-      video.addEventListener("timeupdate", () => {
+  // useEffect(() => {
+  //   const video = document.querySelector("video");
+  //   if (video) {
+  //     video.addEventListener("timeupdate", () => {
 
-        setCurrentTime(video.currentTime);
-        const duration = video.duration;
-        if (!reached90PercentRef && currentTime >= duration * 0.9) {
-          setReached90PercentRef(true);
-          console.log('Video has been viewed around 90%');
-          const statusVideo = "hoàn thành video";
-          console.log("statusVideo", statusVideo);
-          const score = 0;
-          const lessonName = lessonData?.data.name || "";
-          const lessonId = idLesson;
-          const progressId = Courseprogress?.data?._id;
-          const scoreDatacreate = {
-            score,
-            lessonName,
-            lessonId,
-            progressId,
-            statusVideo,
-          };
-          // Gọi hàm addScore và xử lý kết quả
-          if (!scoreData) {
-            addScore(scoreDatacreate)
-            refetchLessonData()
+  //       setCurrentTime(video.currentTime);
+  //       const duration = video.duration;
+  //       if (!reached90PercentRef && currentTime >= duration * 0.9) {
+  //         setReached90PercentRef(true);
+  //         console.log('Video has been viewed around 90%');
+  //         const statusVideo = "hoàn thành video";
+  //         console.log("statusVideo", statusVideo);
+  //         const score = 0;
+  //         const lessonName = lessonData?.data.name || "";
+  //         const lessonId = idLesson;
+  //         const progressId = Courseprogress?.data?._id;
+  //         const scoreDatacreate = {
+  //           score,
+  //           lessonName,
+  //           lessonId,
+  //           progressId,
+  //           statusVideo,
+  //         };
+  //         // Gọi hàm addScore và xử lý kết quả
+  //         if (!scoreData) {
+  //           addScore(scoreDatacreate)
+  //           refetchLessonData()
 
-          } else if (scoreData && !scoreData.statusVideo) {
-            updateStatus({ id: idScore, statusVideo: statusVideo })
-            refetchLessonData()
-          }
-        }
-        setReached90PercentRef(false)
-      });
-    }
+  //         } else if (scoreData && !scoreData.statusVideo) {
+  //           updateStatus({ id: idScore, statusVideo: statusVideo })
+  //           refetchLessonData()
+  //         }
+  //       }
+  //       setReached90PercentRef(false)
+  //     });
+  //   }
 
 
 
-  },);
+  // });
+
   const handleTimeUpdate = (event) => {
-    // const video = event.target;
-    // const progress = (video.currentTime / video.duration) * 100;
-    // console.log("progress", progress);
+    let idintervel = null
+    const video = event.target;
+    const progress = (video.currentTime / video.duration) * 100;
+    console.log(video.duration);
+    if (!idintervel) {
+      idintervel = setTimeout(() => {
+        clearInterval(idintervel)
+      }, video.duration * 1000)
+      if (idintervel) {
+        video.currentTime <= 
+      }
 
-    // if (progress >= 90 && !reached90PercentRef) {
-    //   setReached90PercentRef(true);
-    //   console.log('Video has been viewed around 90%');
-    //   const statusVideo = "hoàn thành video";
-    //   console.log("statusVideo", statusVideo);
-    //   const score = 0;
-    //   const lessonName = lessonData?.data.name || "";
-    //   const lessonId = idLesson;
-    //   const progressId = Courseprogress?.data?._id;
-    //   const scoreDatacreate = {
-    //     score,
-    //     lessonName,
-    //     lessonId,
-    //     progressId,
-    //     statusVideo,
-    //   };
-    //   // Gọi hàm addScore và xử lý kết quả
-    //   if (!scoreData) {
-    //     addScore(scoreDatacreate)
-    //     refetchLessonData()
+    }
+    // Lưu thời điểm hiện tại để so sánh lần sau
+    if (progress >= 90 && !reached90PercentRef) {
+      setReached90PercentRef(true);
+      const statusVideo = "hoàn thành video";
+      console.log("statusVideo", statusVideo);
+      const score = 0;
+      const lessonName = lessonData?.data.name || "";
+      const lessonId = idLesson;
+      const progressId = Courseprogress?.data?._id;
+      const scoreDatacreate = {
+        score,
+        lessonName,
+        lessonId,
+        progressId,
+        statusVideo,
+      };
+      // Gọi hàm addScore và xử lý kết quả
+      if (!scoreData) {
+        addScore(scoreDatacreate)
+        refetchLessonData()
 
-    //   } else if (scoreData && !scoreData.statusVideo) {
-    //     updateStatus({ id: idScore, statusVideo: statusVideo })
-    //     refetchLessonData()
-    //   }
-    //   // Add your specific logic here
-    // }
+      } else if (scoreData && !scoreData.statusVideo) {
+        updateStatus({ id: idScore, statusVideo: statusVideo })
+        refetchLessonData()
+      }
+      // Add your specific logic here
+    }
   };
   const handleSeeking = () => {
+    console.log("currentTime", videoRef.current.currentTime);
+
     // Lưu thời gian trước khi bắt đầu tua
     setPrevTime(videoRef.current.currentTime);
   };
 
   const handleSeeked = () => {
+    console.log(" videoRef.current.currentTime", videoRef.current.currentTime, prevTime);
+
     // Kiểm tra điều kiện tua quá nhanh
     const currentTime = videoRef.current.currentTime;
     if (Math.abs(currentTime - prevTime) > 5) {
@@ -409,6 +423,19 @@ function Videodetail() {
       alert('Cảnh báo: Bạn đã tua video quá nhanh!')
       console.log('Cảnh báo: Bạn đã tua video quá nhanh!');
       // Thêm mã xử lý hoặc hiển thị cảnh báo của bạn ở đây
+    }
+  };
+  const openModal = () => {
+    console.log("reached90PercentRef", reached90PercentRef);
+
+    if (scoreData?.statusVideo === "hoàn thành video" || reached90PercentRef) {
+      setOpenTestModal(true);
+    } else {
+      notification.warning({
+        message: "Thông báo",
+        description: "Bạn cần hoàn thành tối thiểu 90% bài giảng để làm bài kiểm tra.",
+        placement: 'top',
+      });
     }
   };
   // Hàm xử lý khi người dùng nhấn nút "Thử lại"
@@ -632,7 +659,6 @@ function Videodetail() {
             ref={videoRef}
             key={videoSourceUrl}
             onSeeking={handleSeeking}
-            onSeeked={handleSeeked}
             onTimeUpdate={handleTimeUpdate}
             controls
             width="100%"
@@ -641,7 +667,7 @@ function Videodetail() {
             <source src={videoSourceUrl} type="video/mp4" />
           </video>
 
-          <p>Thời gian hiện tại của video: {currentTime} giây</p>
+          {/* <p>Thời gian hiện tại của video: {currentTime} giây</p> */}
 
         </div>
 

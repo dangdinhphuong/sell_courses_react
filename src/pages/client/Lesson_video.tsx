@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Outlet } from "react-router-dom";
 import { useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import {
   BsFillCheckCircleFill,
   BsAlarm,
@@ -19,10 +20,16 @@ import { useAddRatingMutation } from "@/Api/ratingApi";
 import { useGetCourseprogressByIdQuery, useUpdateCourseprogressMutation } from "@/Api/CourseProgress";
 import { IRating } from "@/interface/rating";
 import { useAddScoreMutation, useGetScoreForprogressQuery } from "@/Api/score";
+import {
+  message,
+  notification,
+} from "antd";
 const Lesson_video = () => {
   const { idProduct } = useParams<{ idProduct: string }>();
   const { idLesson } = useParams<{ idLesson: string }>();
   const { data: lessonData } = useGetLessonByIdQuery(idLesson || "");
+  console.log("lessonData", lessonData);
+
   const { data: productData, isLoading: productIsLoading } = useGetProductByIdQuery(idProduct || "");
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -36,6 +43,8 @@ const Lesson_video = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [rating, setRating] = useState(0); // Đánh giá ban đầu là 0
   const [feedback, setFeedback] = useState('');
+  const [videoDurations, setVideoDurations] = useState([]);
+
   const [addScore] = useAddScoreMutation();
   // if (!productData) {
   //   return <div>No data found for this product.</div>;
@@ -43,6 +52,8 @@ const Lesson_video = () => {
   // Tính toán số lượng bài học đã hoàn thành
   const completedLessonCount = Courseprogress?.data.progress || 0;
   // Sử dụng hook để lấy giá trị ScoreForprogress
+  console.log("Courseprogress _ Courseprogress", Courseprogress);
+
   const { data: ScoreForprogress } = useGetScoreForprogressQuery(
     Courseprogress?.data?.scores[0]?.progressId
   );
@@ -61,7 +72,7 @@ const Lesson_video = () => {
   }, [progress, completedLessonCount, id, updateScore, refetchCourseProgress]);
   // cập nhật trạng thái hoàn thành trong bài học
   // Tính toán số lượng bài học chưa được chiếu
-  const lessons = productData?.data.lessons || [];
+  const lessons = productData?.data.lessons || []
   const unwatchedLessonCount = lessons.length - completedLessonCount;
   // Tính toán phần trăm số lượng bài học đã hoàn thành
   const percentageCompleted = Math.round((completedLessonCount / lessons.length) * 100);
@@ -142,6 +153,8 @@ const Lesson_video = () => {
       setModalVisible(false);
     }
   }, [percentageCompleted]);
+
+
   // if (isLoading) {
   //   return  <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white">
   //   <RaceBy size={100} lineWeight={6} speed={1.4} color="#47d1d1" />
@@ -151,11 +164,36 @@ const Lesson_video = () => {
   if (!productData) {
     return <div>No data found for this product.</div>;
   }
-  const handleLessonLinkClick = async (lesson) => {
+  const handleLessonLinkClick = async (lesson: any, index: any) => {
+    if (index > 0) {
+      const lesson = lessons[index - 1]
+      console.log("lesson", lesson);
+      const lessonIdToFind = lesson._id;
+      const lessonScores = Courseprogress?.data?.scores || [];
+      const scoreData = findScoreByLessonId(
+        lessonIdToFind,
+        lessonScores
+      );
+      const isCompleted =
+        scoreData?.lessonId === lesson._id &&
+        scoreData?.score &&
+        scoreData?.statusVideo == "hoàn thành video" &&
+        scoreData?.score > 80;
+      console.log("isCompleted", isCompleted);
+
+      if (!isCompleted) {
+        notification.warning({
+          message: "Thông báo",
+          description: "Bạn chưa hoàn thành bài học trước.",
+          placement: "top",
+        });
+        return
+      }
+    }
     const lessonId = lesson._id;
     const lessonName = lesson.name;
     const progressId = Courseprogress?.data?._id;
-    const scoreData = {
+    const storesCoreData = {
       score: 0,
       lessonId,
       lessonName,
@@ -164,7 +202,7 @@ const Lesson_video = () => {
 
     try {
       // Gọi hàm addScore và đợi kết quả
-      const result = await addScore(scoreData);
+      const result = await addScore(storesCoreData);
 
       if (result.error) {
         // Xử lý trường hợp thêm dữ liệu không thành công, ví dụ, hiển thị thông báo lỗi.
@@ -176,8 +214,17 @@ const Lesson_video = () => {
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);
     }
+    navigate(`lesson/${lesson._id}/${idUser}`)
   };
+  const formatTime = (seconds: any) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
 
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+
+    return `${formattedMinutes}:${formattedSeconds}`;
+  }
 
   return (
     <>
@@ -233,10 +280,9 @@ const Lesson_video = () => {
                       className={`learn-item-1 bg-white p-4 rounded-md shadow-md border-2 mt-4 ${isCompleted ? "completed" : ""
                         } ${isInProgress ? "in-progress" : ""}`}
                     >
-                      <Link
-                        to={`lesson/${lesson._id}/${idUser}`}
-                        className="w-60"
-                        onClick={() => handleLessonLinkClick(lesson)}
+                      <div
+
+                        onClick={() => handleLessonLinkClick(lesson, index, scoreData)}
                       >
                         {/* Nội dung của bạn */}
                         <div className="flex items-center justify-between">
@@ -245,7 +291,7 @@ const Lesson_video = () => {
                           </h3>
                           <p className="flex items-center space-x-1 text-gray-600">
                             <BsAlarm />
-                            <span>01:48</span>
+                            <span>  01:48 </span>
                           </p>
                         </div>
                         <div className="flex justify-between items-center ">
@@ -272,7 +318,7 @@ const Lesson_video = () => {
 
                         </div>
 
-                      </Link>
+                      </div>
                     </div>
                   );
                 })}
@@ -283,10 +329,10 @@ const Lesson_video = () => {
               <Outlet />
             </div>
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
       {/* Modal */}
-      <Modal
+      < Modal
         title=""
         open={modalVisible}
         onOk={() => setModalVisible(false)}
@@ -333,7 +379,7 @@ const Lesson_video = () => {
           </div>
 
         </div>
-      </Modal>
+      </Modal >
     </>
   );
 };
