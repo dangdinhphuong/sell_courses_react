@@ -75,11 +75,13 @@ const Thong_tin_thanhtoan = () => {
   }, [done, orderId]);
   const { data: dataUSer } = useGetOneUserQuery(checkUser._id);
   const handelPayMentVNPay = async () => {
+    const orderId = localStorage.getItem("orderId");
     await axios
       .post(`http://localhost:8088/api/create-payment-vnpay`, {
         user: checkUser?._id as string,
         name: checkUser?.name,
         od: "done",
+        orderId:orderId,
         total: vouche
           ? String(productData?.data.price - disCount)
           : productData?.data.price,
