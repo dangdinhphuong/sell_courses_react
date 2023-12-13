@@ -38,6 +38,8 @@ const Lesson_video = () => {
       productId: idProduct,
       userId: idUser,
     });
+    console.log("Courseprogress", Courseprogress);
+    
   const [updateScore] = useUpdateCourseprogressMutation();
   const [modalVisible, setModalVisible] = useState(false);
   const [rating, setRating] = useState(0); // Đánh giá ban đầu là 0
@@ -246,6 +248,7 @@ const Lesson_video = () => {
     const progressId = Courseprogress?.data?._id;
     const storesCoreData = {
       score: 0,
+      scoreNew:0,
       lessonId,
       lessonName,
       progressId,

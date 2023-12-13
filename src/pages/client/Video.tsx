@@ -272,7 +272,7 @@ function Videodetail() {
       });
 
       // Tính điểm và lưu vào cơ sở dữ liệu
-      const score = (totalCorrect / shuffledQuizzData.length) * 100;
+      const score = totalCorrect == shuffledQuizzData.length ? 100 :  Math.ceil((totalCorrect / shuffledQuizzData.length) * 100);
       const lessonName = lessonData?.data.name || "";
       const lessonId = idLesson;
       const progressId = Courseprogress?.data?._id;
@@ -281,6 +281,7 @@ function Videodetail() {
         lessonName,
         lessonId,
         progressId,
+        scoreNew: score
       };
       addScore(scoreData);
 
@@ -386,6 +387,7 @@ function Videodetail() {
       const progressId = Courseprogress?.data?._id;
       const scoreDatacreate = {
         score,
+        scoreNew:score,
         lessonName,
         lessonId,
         progressId,
