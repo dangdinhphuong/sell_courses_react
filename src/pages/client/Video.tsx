@@ -51,6 +51,8 @@ import {
   useGetProgressByIdQuery,
 } from "@/Api/CourseProgress";
 import { useCreateCommentMutation } from "@/Api/comment";
+import { useAddHistoryTestMutation, useGetHistoryTestQuery } from "@/Api/historyTest";
+
 import axios from "axios";
 import { useAddScoreMutation, useUpdateStatusMutation } from "@/Api/score";
 type Answer = {
@@ -59,7 +61,6 @@ type Answer = {
 };
 const Comment = React.memo(({ comment }: any) => {
   const vsv = comment.createdAt.split('T')[0];
-  console.log(comment);
   const [checkComment, setCheckComment] = useState(false);
   const [userInfo, setUserInfo] = useState(() => {
     const storedUserInfo = localStorage.getItem("userInfo");
@@ -141,7 +142,7 @@ const Comment = React.memo(({ comment }: any) => {
       {comment.children.length > 0 && (
         <div className="comment-children">
           {comment.children.map((child: any) => {
-            console.log(child, "children");
+            // console.log(child, "children");
             return <Comment key={child._id} comment={child} />;
           })}
         </div>
@@ -182,11 +183,14 @@ function Videodetail() {
     handelFetchCOmment();
   }, []);
   const { idUser } = useParams<{ idUser: string }>();
-  const { data: Courseprogress } = useGetCourseprogressByIdQuery({
+  const { data: Courseprogress, refetch: refetchCourseProgress } = useGetCourseprogressByIdQuery({
     productId: idProduct,
     userId: idUser,
   });
-
+  const { data: historyTestData, refetch: refetchhistoryTestData } = useGetHistoryTestQuery({
+    lessonId: idLesson,
+    userId: idUser,
+  })
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
   const [noteContent, setNoteContent]: any = useState(""); // State for note content
@@ -194,11 +198,11 @@ function Videodetail() {
   const [open, setOpen] = useState(false);
   const [openTestModal, setOpenTestModal] = useState(false);
   const [noteList, setNoteList]: any = useState([]);
-  const [currentLesson, setCurrentLesson]: any = useState("");
   const [editingNoteIndex, setEditingNoteIndex] = useState<number | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedVideoId, setSelectedVideoId] = useState(null);
   const [api, contextHolder] = notification.useNotification();
+  const [isOpenModalHistory, setOpenModalHistory] = useState(false)
   const idOfLesson0 = productData?.data?.lessons[0]?._id;
   // Khai báo mutation và query
   const [addNoteMutation] = useAddNoteMutation();
@@ -206,10 +210,16 @@ function Videodetail() {
   const [removeNoteMutation] = useRemoveNoteMutation();
   const { data: notesData } = useGetNotesQuery();
   const [addScore] = useAddScoreMutation();
+  const [addHistoryTest] = useAddHistoryTestMutation();
+
   const [updateStatus] = useUpdateStatusMutation();
   const videoSourceUrl = lessonData?.data.video || "";
 
-
+  const dataHistory = useMemo(() => {
+    if (historyTestData?.data) {
+      return JSON.parse(historyTestData.data.content)
+    }
+  })
   // Hàm xáo trộn một mảng
   function shuffleArray(array: any) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -242,6 +252,15 @@ function Videodetail() {
     ).length;
     return (correctAnswers / totalQuestions) * 100;
   };
+  const calculateScoreHistory = useMemo(() => {
+    if (dataHistory) {
+      const totalQuestions = dataHistory.length;
+      const correctAnswers = dataHistory.filter(
+        (quiz: Quiz) => quiz.isCorrect
+      ).length;
+      return (correctAnswers / totalQuestions) * 100;
+    }
+  })
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const handleSubmit = () => {
     const allQuestionsAnswered = shuffledQuizzData.every((quiz: Quiz) => {
@@ -265,14 +284,15 @@ function Videodetail() {
           const selectedOptionIndex = quiz.options.indexOf(
             selectedAnswer.selectedOption
           );
+          quiz.answer = selectedAnswer.selectedOption
           quiz.isCorrect = selectedOptionIndex === correctIndex;
           if (quiz.isCorrect) totalCorrect += 1;
         }
         refetchLessonData()
       });
-
+      console.log("shuffledQuizzData________", shuffledQuizzData)
       // Tính điểm và lưu vào cơ sở dữ liệu
-      const score = totalCorrect == shuffledQuizzData.length ? 100 :  Math.ceil((totalCorrect / shuffledQuizzData.length) * 100);
+      const score = totalCorrect == shuffledQuizzData.length ? 100 : Math.ceil((totalCorrect / shuffledQuizzData.length) * 100);
       const lessonName = lessonData?.data.name || "";
       const lessonId = idLesson;
       const progressId = Courseprogress?.data?._id;
@@ -283,8 +303,18 @@ function Videodetail() {
         progressId,
         scoreNew: score
       };
-      addScore(scoreData);
+      addScore(scoreData).then((res) => {
+        refetchCourseProgress()
 
+      });
+      const bodyFormHistory = {
+        lessonId: idLesson,
+        userId: idUser,
+        content: JSON.stringify(shuffledQuizzData)
+      }
+      addHistoryTest(bodyFormHistory).then(res => {
+        refetchhistoryTestData()
+      })
       // Đặt thời gian đếm ngược và xử lý nộp bài
       setTimeout(() => {
         setShowRetryButton(true);
@@ -380,14 +410,13 @@ function Videodetail() {
     if (progress >= 90 && !reached90PercentRef) {
       setReached90PercentRef(true);
       const statusVideo = "hoàn thành video";
-      console.log("statusVideo", statusVideo);
       const score = 0;
       const lessonName = lessonData?.data.name || "";
       const lessonId = idLesson;
       const progressId = Courseprogress?.data?._id;
       const scoreDatacreate = {
         score,
-        scoreNew:score,
+        scoreNew: score,
         lessonName,
         lessonId,
         progressId,
@@ -395,7 +424,7 @@ function Videodetail() {
       };
       // Gọi hàm addScore và xử lý kết quả
       if (!scoreData) {
-        addScore(scoreDatacreate)
+        addScore(scoreDatacreate).then()
         refetchLessonData()
 
       } else if (scoreData && !scoreData.statusVideo) {
@@ -405,28 +434,9 @@ function Videodetail() {
       // Add your specific logic here
     }
   };
-  const handleSeeking = () => {
-    console.log("currentTime", videoRef.current.currentTime);
 
-    // Lưu thời gian trước khi bắt đầu tua
-    setPrevTime(videoRef.current.currentTime);
-  };
 
-  const handleSeeked = () => {
-    console.log(" videoRef.current.currentTime", videoRef.current.currentTime, prevTime);
-
-    // Kiểm tra điều kiện tua quá nhanh
-    const currentTime = videoRef.current.currentTime;
-    if (Math.abs(currentTime - prevTime) > 5) {
-      // Nếu tua quá nhanh, đặt lại thời gian video
-      videoRef.current.currentTime = prevTime;
-      alert('Cảnh báo: Bạn đã tua video quá nhanh!')
-      console.log('Cảnh báo: Bạn đã tua video quá nhanh!');
-      // Thêm mã xử lý hoặc hiển thị cảnh báo của bạn ở đây
-    }
-  };
   const openModal = () => {
-    console.log("reached90PercentRef", reached90PercentRef);
 
     if (scoreData?.statusVideo === "hoàn thành video" || reached90PercentRef) {
       setOpenTestModal(true);
@@ -438,6 +448,9 @@ function Videodetail() {
       });
     }
   };
+  const openModalHistory = () => {
+    setOpenModalHistory(true)
+  }
   // Hàm xử lý khi người dùng nhấn nút "Thử lại"
   const handleRetry = () => {
     setSubmitted(false);
@@ -462,6 +475,7 @@ function Videodetail() {
         ]),
       }));
       setShuffledQuizzData(shuffledData);
+
     }
   }, [lessonData]);
   // Hàm tính điểm
@@ -658,8 +672,6 @@ function Videodetail() {
           <video
             ref={videoRef}
             key={videoSourceUrl}
-            onSeeking={handleSeeking}
-            onSeeked={handleSeeked}
             onTimeUpdate={handleTimeUpdate}
             controls
             width="100%"
@@ -880,18 +892,35 @@ function Videodetail() {
             )}
           </div>
           {/* Test */}
-          <div className="flex items-center">
-            <button
-              id="kiem-tra"
-              className="text-2xl font-semibold underline hover:underline-offset-4 mt-8"
-              onClick={openModal}
-            >
-              Kiểm tra bài học
-            </button>
-            <div className="mt-9 ml-3 text-xl">
-              <FaRegHandPointLeft />
+          <div className="flex items-center  justify-between">
+            <div className="flex items-center ">
+              <button
+                id="kiem-tra"
+                className="text-2xl font-semibold underline hover:underline-offset-4 mt-8"
+                onClick={openModal}
+              >
+                Kiểm tra bài học
+              </button>
+              <div className="mt-9 ml-3 text-xl">
+                <FaRegHandPointLeft />
+              </div>
             </div>
-
+            <div className="flex items-center">
+              {historyTestData?.data &&
+                <>
+                  <button
+                    id="kiem-tra"
+                    className="text-2xl font-semibold underline hover:underline-offset-4 mt-8"
+                    onClick={openModalHistory}
+                  >
+                    Lịch sử làm bài
+                  </button>
+                  <div className="mt-9 ml-3 text-xl">
+                    <FaRegHandPointLeft />
+                  </div>
+                </>
+              }
+            </div>
           </div>
 
           <Modal
@@ -899,7 +928,7 @@ function Videodetail() {
             centered
             visible={openTestModal}
             onOk={() => setOpenTestModal(false)}
-            onCancel={() => setOpenTestModal(false)}
+            onCancel={() => { handleRetry(), setOpenTestModal(false) }}
             width={800}
             footer={null}
             bodyStyle={{
@@ -1014,6 +1043,90 @@ function Videodetail() {
                 </button>
               </div>
             )}
+          </Modal>
+
+          <Modal
+            title="Lịch sử làm bài Test"
+            centered
+            visible={isOpenModalHistory}
+            onCancel={() => { setOpenModalHistory(false) }}
+            width={800}
+            footer={null}
+            bodyStyle={{
+              maxHeight: "100vh",
+              overflowY: "auto",
+              minHeight: "90vh",
+              backgroundColor: "#f6f7f9",
+            }}
+            className="my-8"
+          >
+            <div className="flex justify-end">
+              <p className="mt-2 text-lg mt-8 mr-4">
+                Số điểm: {calculateScoreHistory}/100
+              </p>
+            </div>
+            {/* <p className="mt-2 text-lg">Điểm cao nhất cho bài học {score} điểm</p> */}
+            {dataHistory?.map((quiz: Quiz) => (
+              <div
+                key={quiz._id}
+                id={`quiz-${quiz._id}`}
+
+              >
+                {/* Tiêu đề của câu hỏi */}
+                <h3 className="font-bold text-xl mt-4 ml-3">
+                  Câu hỏi:{" "}
+                  <samp className="font-medium text-lg">{quiz.name}</samp>
+                </h3>
+                {/* Danh sách các lựa chọn câu trả lời */}
+                <ul className=" px-2 py-4 w-full max-w-3xl">
+                  {quiz.options.map((option: any, optionIndex: number) => {
+                    // Kiểm tra xem lựa chọn này đã được chọn chưa
+                    const isSelected = quiz.answer === option
+
+                    let answerClassName =
+                      "cursor-pointer bg-white text-dark font-semibold py-2 px-4 rounded-md mr-2 my-3 py-4 ml-2";
+                    let borderStyle = "1px solid transparent";
+                    let bgColor = "";
+
+                    if (isSelected && quiz.isCorrect) {
+                      answerClassName += " bg-green-500"; // Câu trả lời đúng
+                      borderStyle = "1px solid #48bd79";
+                      bgColor = "#f0ffed";
+                    } else if (isSelected && !quiz.isCorrect) {
+                      answerClassName += " bg-red-500";
+                      borderStyle = "1px solid #cc5140";
+                      bgColor = "#fff9f9";
+                    }
+                    return (
+                      <li
+                        key={optionIndex}
+                        className={answerClassName}
+                        disabled
+                        style={{
+                          border: borderStyle,
+                          backgroundColor: bgColor,
+                        }}
+                      >
+                        <MyCheckbox
+
+                          isSelected={isSelected}
+                        />
+                        {String.fromCharCode(65 + optionIndex)}. {option}
+                      </li>
+
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+            <div className="flex justify-end">
+              <button
+                className="bg-blue-500 hover.bg-yellow-500 text-white font-semibold px-3 py-2 rounded-md my-4 mr-4 flex justify-end text-base"
+                onClick={() => { setOpenModalHistory(false), openModal() }}
+              >
+                Làm lại
+              </button>
+            </div>
           </Modal>
         </div>
         {/* Phần hiển thị và gửi bình luận */}

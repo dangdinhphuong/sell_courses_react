@@ -32,6 +32,7 @@ import ScoreApi, { ScoreReducer } from "@/Api/score";
 import orderApi, { orderReducer } from "@/Api/order";
 import comment2Api, { comment2Reducer } from "@/Api/comment";
 import getOderMoneyApi, { getOderMoneyReducer } from "@/Api/getOrderMany";
+import HistoryTestApi, { HistoryReducer } from "@/Api/historyTest"
 // Cấu hình persist ( lưu localStorage )
 const persistConfig = {
   key: "root",
@@ -54,6 +55,8 @@ const rootReducer = combineReducers({
   [orderApi.reducerPath]: orderReducer,
   [comment2Api.reducerPath]: comment2Reducer,
   [getOderMoneyApi.reducerPath]: getOderMoneyReducer,
+  [HistoryTestApi.reducerPath]: HistoryReducer,
+
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
@@ -78,7 +81,8 @@ export const store = configureStore({
       .concat(orderApi.middleware)
       .concat(commentApi.middleware)
       .concat(comment2Api.middleware)
-      .concat(getOderMoneyApi.middleware),
+      .concat(getOderMoneyApi.middleware)
+      .concat(HistoryTestApi.middleware),
 });
 
 
