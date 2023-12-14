@@ -1122,7 +1122,7 @@ function Videodetail() {
             <div className="flex justify-end">
               <button
                 className="bg-blue-500 hover.bg-yellow-500 text-white font-semibold px-3 py-2 rounded-md my-4 mr-4 flex justify-end text-base"
-                onClick={() => { setOpenModalHistory(false), openModal() }}
+                onClick={() => { setOpenModalHistory(false), handleRetry(), openModal() }}
               >
                 Làm lại
               </button>
