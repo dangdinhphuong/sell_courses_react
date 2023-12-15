@@ -82,18 +82,11 @@ const ProfileUser = () => {
             <div className="w-full bg-[#D2E6E4] rounded rounded-tl-lg rounded-tr-lg ">
               <div>
                 <h1 className="text-5xl font-bold text-[#0B7077]  pt-14  pl-40 ">
-                  Welcome To Profile Of {DataUser?.name}{" "}
+                  Welcome To Profile Of <br /> {DataUser?.name}{" "}
                 </h1>
-                <div className="avatar avatar-left ">
-                  <img
-                    src={DataUser?.img}
-                    alt="Avatar"
-                    className="avatar-image"
-                  />
-                </div>
               </div>
               <img
-                className=" w-64 -mt-10  h-auto"
+                className=" w-64 mt-2 mr-20 float-right"
                 src="../../../public/img/sinhvien.png"
                 alt=""
               />
@@ -172,7 +165,7 @@ const ProfileUser = () => {
                                           </div>
                                           <div className="w-[60%] mt-2">
                                             <p>{items?.name}</p>
-                                            <p>{items?.description}</p>
+                                            <p className="line-clamp-3">{items?.description}</p>
                                           </div>
                                         </div>
                                       </div>
