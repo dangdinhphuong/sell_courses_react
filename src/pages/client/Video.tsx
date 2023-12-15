@@ -204,6 +204,7 @@ function Videodetail() {
   const [api, contextHolder] = notification.useNotification();
   const [isOpenModalHistory, setOpenModalHistory] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [isShowTest, setIsShowTest] = useState(false)
   const idOfLesson0 = productData?.data?.lessons[0]?._id;
   // Khai báo mutation và query
   const [addNoteMutation] = useAddNoteMutation();
@@ -313,6 +314,9 @@ function Videodetail() {
         userId: idUser,
         content: JSON.stringify(shuffledQuizzData)
       }
+      setIsShowTest(false)
+      setOpenTestModal(true)
+      setCurrentIndex(0)
       addHistoryTest(bodyFormHistory).then(res => {
         refetchhistoryTestData()
       })
@@ -440,7 +444,7 @@ function Videodetail() {
   const openModal = () => {
 
     if (scoreData?.statusVideo === "hoàn thành video" || reached90PercentRef) {
-      setOpenTestModal(true);
+      setIsShowTest(true);
     } else {
       notification.warning({
         message: "Thông báo",
@@ -669,186 +673,130 @@ function Videodetail() {
     <>
       <div className="  max-w-7xl mx-auto">
         {/* Phần hiển thị video */}
-        <div className="h-[40%] ">
-          <video
-            ref={videoRef}
-            key={videoSourceUrl}
-            onTimeUpdate={handleTimeUpdate}
-            controls
-            width="100%"
-            height="auto"
-          >
-            <source src={videoSourceUrl} type="video/mp4" />
-          </video>
+        {isShowTest ?
+          <div className="h-[40%] ">
 
-          {/* <p>Thời gian hiện tại của video: {currentTime} giây</p> */}
-          
-          {shuffledQuizzData.map((quiz: Quiz, index) => (
-            <div
-              key={quiz._id}
-              id={`quiz-${quiz._id}`}
+            {/* <p>Thời gian hiện tại của video: {currentTime} giây</p> */}
 
-            >
-              {index == currentIndex &&
-                <div>
-                  {/* Tiêu đề của câu hỏi */}
-                  <h3 className="font-bold text-xl mt-4 ml-3 mb-4">
-                    Câu hỏi:{" "}
-                    <samp className="font-medium text-lg">{quiz.name}</samp>
-                  </h3>
-                  {/* Danh sách các lựa chọn câu trả lời */}
-                  <div className="grid grid-cols-2 gap-2">
-                  {quiz.options.map((option: any, optionIndex: number) => {
-                      // Kiểm tra xem lựa chọn này đã được chọn chưa
-                      const isSelected = selectedAnswers.some(
-                        (answer: any) =>
-                          answer?.quizId === quiz._id &&
-                          answer.selectedOption === option
-                      );
+            {shuffledQuizzData.map((quiz: Quiz, index) => (
+              <div
+                key={quiz._id}
+                id={`quiz-${quiz._id}`}
 
-                      let answerClassName =
-                        "cursor-pointer bg-[#f0f0f0] text-dark font-semibold py-2 px-4 rounded-md mr-2 my-3 py-4 ml-2";
-                      let borderStyle = "1px solid transparent";
-                      let bgColor = "";
-                      let color = "";
-                      if (submitted) {
-                        if (isSelected && quiz.isCorrect) {
-                          answerClassName += " bg-green-500"; // Câu trả lời đúng
-                          borderStyle = "1px solid #48bd79";
-                          bgColor = "#f0ffed";
-                        } else if (isSelected && !quiz.isCorrect) {
-                          answerClassName += " bg-red-500";
-                          borderStyle = "1px solid #cc5140";
-                          bgColor = "#fff9f9";
+              >
+                {index == currentIndex &&
+                  <div>
+                    {/* Tiêu đề của câu hỏi */}
+                    <h3 className="font-bold text-xl mt-4 ml-3 mb-4">
+                      Câu hỏi:{" "}
+                      <samp className="font-medium text-lg">{quiz.name}</samp>
+                    </h3>
+                    {/* Danh sách các lựa chọn câu trả lời */}
+                    <div className="grid grid-cols-2 gap-2">
+                      {quiz.options.map((option: any, optionIndex: number) => {
+                        // Kiểm tra xem lựa chọn này đã được chọn chưa
+                        const isSelected = selectedAnswers.some(
+                          (answer: any) =>
+                            answer?.quizId === quiz._id &&
+                            answer.selectedOption === option
+                        );
+
+                        let answerClassName =
+                          "cursor-pointer bg-[#f0f0f0] text-dark font-semibold py-2 px-4 rounded-md mr-2 my-3 py-4 ml-2";
+                        let borderStyle = "1px solid transparent";
+                        let bgColor = "";
+                        let color = "";
+                        if (isSelected) {
+                          answerClassName += "bg-blue-700"; // Câu trả lời đã chọn nhưng chưa gửi
+                          borderStyle = "1px solid rgb(0, 147, 252)";
+                          bgColor = "rgb(0, 147, 252)";
+                          color = "#ffff"
                         }
-                      } else if (isSelected) {
-                        answerClassName += "bg-blue-700"; // Câu trả lời đã chọn nhưng chưa gửi
-                        borderStyle = "1px solid rgb(0, 147, 252)";
-                        bgColor = "rgb(0, 147, 252)";
-                        color = "#ffff"
-                      }
 
-                      return (
-                        <button
-                          key={optionIndex}
-                          className={answerClassName}
-                          onClick={() => {
-                            !submitted && selectAnswer(quiz, option);
-                            setSelectedQuestion(quiz._id);
-                          }}
-                          style={{
-                            border: borderStyle,
-                            backgroundColor: bgColor,
-                            color:color
-                          }}
-                        >
-                          {/* <MyCheckbox
+                        return (
+                          <button
+                            key={optionIndex}
+                            className={answerClassName}
+                            onClick={() => {
+                              !submitted && selectAnswer(quiz, option);
+                              setSelectedQuestion(quiz._id);
+                            }}
+                            style={{
+                              border: borderStyle,
+                              backgroundColor: bgColor,
+                              color: color
+                            }}
+                          >
+                            {/* <MyCheckbox
                             isSelected={isSelected}
                             onChange={(checked: boolean) =>
                               !submitted && selectAnswer(quiz, option)
                             }
                           /> */}
-                          {String.fromCharCode(65 + optionIndex)}. {option}
-                        </button>
+                            {String.fromCharCode(65 + optionIndex)}. {option}
+                          </button>
 
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
+
                   </div>
-                  {/* <ul className=" px-2 py-4 w-full max-w-3xl">
-                    {quiz.options.map((option: any, optionIndex: number) => {
-                      // Kiểm tra xem lựa chọn này đã được chọn chưa
-                      const isSelected = selectedAnswers.some(
-                        (answer: any) =>
-                          answer?.quizId === quiz._id &&
-                          answer.selectedOption === option
-                      );
+                }
 
-                      let answerClassName =
-                        "cursor-pointer bg-white text-dark font-semibold py-2 px-4 rounded-md mr-2 my-3 py-4 ml-2";
-                      let borderStyle = "1px solid transparent";
-                      let bgColor = "";
 
-                      if (submitted) {
-                        if (isSelected && quiz.isCorrect) {
-                          answerClassName += " bg-green-500"; // Câu trả lời đúng
-                          borderStyle = "1px solid #48bd79";
-                          bgColor = "#f0ffed";
-                        } else if (isSelected && !quiz.isCorrect) {
-                          answerClassName += " bg-red-500";
-                          borderStyle = "1px solid #cc5140";
-                          bgColor = "#fff9f9";
-                        }
-                      } else if (isSelected) {
-                        answerClassName += "bg-blue-700"; // Câu trả lời đã chọn nhưng chưa gửi
-                        borderStyle = "1px solid rgb(0, 147, 252)";
-                      }
+              </div>
+            ))}
+            <div className="grid grid-cols-2 gap-2 border-t-2 border-t-[#f0f0f0] mt-10">
+              {currentIndex === 0 ?
+                <button
+                  className="bg-[#f0f0f0] text-black font-semibold px-3 py-2 rounded-lg my-4 mr-4 text-base"
+                >
+                  Previous
+                </button>
+                :
+                <button
+                  onClick={() => setCurrentIndex((prev) => prev - 1)}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-lg my-4 mr-4 text-base"
+                >
+                  Previous
+                </button>
+              }
+              {currentIndex + 1 == shuffledQuizzData.length ?
 
-                      return (
-                        <li
-                          key={optionIndex}
-                          className={answerClassName}
-                          onClick={() => {
-                            !submitted && selectAnswer(quiz, option);
-                            setSelectedQuestion(quiz._id);
-                          }}
-                          style={{
-                            border: borderStyle,
-                            backgroundColor: bgColor,
-                          }}
-                        >
-                          <MyCheckbox
-                            isSelected={isSelected}
-                            onChange={(checked: boolean) =>
-                              !submitted && selectAnswer(quiz, option)
-                            }
-                          />
-                          {String.fromCharCode(65 + optionIndex)}. {option}
-                        </li>
-
-                      );
-                    })}
-                  </ul> */}
-                </div>
+                <button
+                  onClick={handleSubmit}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-lg my-4 mr-4 text-base"
+                >
+                  Finish
+                </button>
+                :
+                <button
+                  onClick={() => setCurrentIndex((prev) => prev + 1)}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-lg my-4 mr-4 text-base"
+                >
+                  Next
+                </button>
               }
 
-
             </div>
-          ))}
-          <div className="grid grid-cols-2 gap-2 border-t-2 border-t-[#f0f0f0] mt-10">
-            {currentIndex === 0 ? 
-              <button
-                className="bg-[#f0f0f0] text-black font-semibold px-3 py-2 rounded-lg my-4 mr-4 text-base"
-              >
-                Previous
-              </button>
-            : 
-              <button
-                onClick={() => setCurrentIndex((prev) => prev - 1)}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-lg my-4 mr-4 text-base"
-              >
-                Previous
-              </button>
-          }
-          {currentIndex + 1 == shuffledQuizzData.length ?
-          
-            <button
-              onClick={handleSubmit}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-lg my-4 mr-4 text-base"
-            >
-              Finish
-            </button>
-          : 
-            <button
-              onClick={() => setCurrentIndex((prev) => prev + 1)}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-lg my-4 mr-4 text-base"
-            >
-              Next
-            </button>
-          }
-           
-          </div>
 
-        </div>
+          </div>
+          :
+          <div className="h-[40%] ">
+            <video
+              ref={videoRef}
+              key={videoSourceUrl}
+              onTimeUpdate={handleTimeUpdate}
+              controls
+              width="100%"
+              height="auto"
+            >
+              <source src={videoSourceUrl} type="video/mp4" />
+            </video>
+
+          </div>
+        }
+
 
         {/* Phần hiển thị danh sách câu hỏi và câu trả lời */}
         <div className="justify-center w-full mt-10">
@@ -1060,16 +1008,22 @@ function Videodetail() {
           {/* Test */}
           <div className="flex items-center  justify-between">
             <div className="flex items-center ">
-              <button
-                id="kiem-tra"
-                className="text-2xl font-semibold underline hover:underline-offset-4 mt-8"
-                onClick={openModal}
-              >
-                Kiểm tra bài học
-              </button>
-              <div className="mt-9 ml-3 text-xl">
-                <FaRegHandPointLeft />
-              </div>
+              {!isShowTest &&
+                <div className="flex items-center ">
+                  <button
+                    id="kiem-tra"
+                    className="text-2xl font-semibold underline hover:underline-offset-4 mt-8"
+                    onClick={openModal}
+                  >
+                    Kiểm tra bài học
+                  </button>
+                  <div className="mt-9 ml-3 text-xl">
+                    <FaRegHandPointLeft />
+                  </div>
+                </div>
+              }
+
+
             </div>
             <div className="flex items-center">
               {historyTestData?.data &&
@@ -1155,6 +1109,7 @@ function Videodetail() {
                     return (
                       <li
                         key={optionIndex}
+                        disabled
                         className={answerClassName}
                         onClick={() => {
                           !submitted && selectAnswer(quiz, option);
@@ -1165,12 +1120,12 @@ function Videodetail() {
                           backgroundColor: bgColor,
                         }}
                       >
-                        <MyCheckbox
+                        {/* <MyCheckbox
                           isSelected={isSelected}
                           onChange={(checked: boolean) =>
                             !submitted && selectAnswer(quiz, option)
                           }
-                        />
+                        /> */}
                         {String.fromCharCode(65 + optionIndex)}. {option}
                       </li>
 
@@ -1179,18 +1134,7 @@ function Videodetail() {
                 </ul>
               </div>
             ))}
-            {/* Nút "Nộp bài" */}
-            {!submitted && (
-              <div className="flex justify-end">
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-lg my-4 mr-4 text-base"
-                  onClick={handleSubmit}
-                >
-                  Nộp bài
-                </button>
-              </div>
 
-            )}
             {/* Thông báo thời gian chờ trước khi có thể thử lại */}
             {submitted && countdown > 0 && (
               <p className="mt-4 text-lg">
@@ -1203,7 +1147,7 @@ function Videodetail() {
               <div className="flex justify-end">
                 <button
                   className="bg-yellow-400 hover.bg-yellow-500 text-white font-semibold px-3 py-2 rounded-md my-4 mr-4 flex justify-end text-base"
-                  onClick={handleRetry}
+                  onClick={() => { handleRetry(), setOpenTestModal(false), setIsShowTest(true) }}
                 >
                   Làm lại
                 </button>
@@ -1273,10 +1217,10 @@ function Videodetail() {
                           backgroundColor: bgColor,
                         }}
                       >
-                        <MyCheckbox
+                        {/* <MyCheckbox
 
                           isSelected={isSelected}
-                        />
+                        /> */}
                         {String.fromCharCode(65 + optionIndex)}. {option}
                       </li>
 
@@ -1285,14 +1229,18 @@ function Videodetail() {
                 </ul>
               </div>
             ))}
-            <div className="flex justify-end">
-              <button
-                className="bg-blue-500 hover.bg-yellow-500 text-white font-semibold px-3 py-2 rounded-md my-4 mr-4 flex justify-end text-base"
-                onClick={() => { setOpenModalHistory(false), handleRetry(), openModal() }}
-              >
-                Làm lại
-              </button>
-            </div>
+            {!isShowTest &&
+              <div className="flex justify-end">
+                <button
+                  className="bg-blue-500 hover.bg-yellow-500 text-white font-semibold px-3 py-2 rounded-md my-4 mr-4 flex justify-end text-base"
+                  onClick={() => { setOpenModalHistory(false), handleRetry(), setIsShowTest(true) }}
+                >
+                  Làm lại
+                </button>
+
+              </div>
+            }
+
           </Modal>
         </div>
         {/* Phần hiển thị và gửi bình luận */}
