@@ -182,6 +182,9 @@ function Videodetail() {
     };
     handelFetchCOmment();
   }, []);
+  useEffect(() => {
+    if (isShowTest) setIsShowTest(false)
+  }, [idLesson])
   const { idUser } = useParams<{ idUser: string }>();
   const { data: Courseprogress, refetch: refetchCourseProgress } = useGetCourseprogressByIdQuery({
     productId: idProduct,
