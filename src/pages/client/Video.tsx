@@ -447,6 +447,8 @@ function Videodetail() {
   const openModal = () => {
 
     if (scoreData?.statusVideo === "hoàn thành video" || reached90PercentRef) {
+      if (currentIndex != 0) setCurrentIndex(0)
+      handleRetry()
       setIsShowTest(true);
     } else {
       notification.warning({
