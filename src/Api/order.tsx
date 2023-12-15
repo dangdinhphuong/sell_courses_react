@@ -36,6 +36,7 @@ const orderApi = createApi({
           course: course,
           user: user,
           orderStatus : orderStatus,
+          paymentCode:"code",
           payment: {
             paymentAmount: paymentAmount,
             bankName: bankName,
