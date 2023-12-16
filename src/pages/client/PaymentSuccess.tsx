@@ -22,7 +22,9 @@ import { Button, Drawer } from "antd";
 import { useGetOneUserQuery } from "@/Api/userApi";
 import useQueryParams from "../customHook";
 import axios from "axios";
-const Thong_tin_thanhtoan = () => {
+import { Empty, notification } from "antd";
+var count = 1;
+const PaymentSuccess = () => {
   const backgroundStyle = {
     backgroundImage: "url(../../../public/img/bg.png)",
     backgroundSize: "cover", // Đảm bảo hình nền phủ đầy phần tử
@@ -39,6 +41,7 @@ const Thong_tin_thanhtoan = () => {
   const vouche: string | null = queryParameters.get("vouche");
   const voucheId: string | null = queryParameters.get("voucheId");
   const done: string | null = queryParameters.get("vnp_ResponseCode");
+  let paymentCode: string | null = '';
   console.log(done, "ttt");
   const showDrawer = () => {
     setOpen(true);
@@ -75,13 +78,13 @@ const Thong_tin_thanhtoan = () => {
   }, [done, orderId]);
   const { data: dataUSer } = useGetOneUserQuery(checkUser._id);
   const handelPayMentVNPay = async () => {
-    const orderId = localStorage.getItem("orderId")?? "";
+    const orderId = localStorage.getItem("orderId");
     await axios
       .post(`http://localhost:8088/api/create-payment-vnpay`, {
         user: checkUser?._id as string,
         name: checkUser?.name,
         od: "done",
-        id:orderId,
+        orderId:orderId,
         total: vouche
           ? String(productData?.data.price - disCount)
           : productData?.data.price,
@@ -91,42 +94,68 @@ const Thong_tin_thanhtoan = () => {
         },
       })
       .then((data) => {
-
         window.location.href = data.data.url
       });
   };
 
   const checkPaymen = async () => {
-    const orderPayment = {
-      paymentMethod: "Ví điện tử",
+    let code = getParam('vnp_TxnRef');
+    const dataOrer = {
+      paymentMethod: "Ví điện tử tataaaaaa",
       course: idProduct,
       user: checkUser._id,
       orderStatus: !done ? "Chờ xử lý" : "Done",
       payment: {},
+      paymentCode:code,
       vouche: vouche || "",
       paymentAmount: vouche
-        ? String(productData?.data.price - disCount)
-        : productData?.data.price,
+          ? String(productData?.data.price - disCount)
+          : productData?.data.price,
       bankName: "NCB",
-    };
-
-    // const data = await addOrder({
-    //   paymentMethod: "Ví điện tử",
-    //   course: idProduct,
-    //   user: checkUser._id,
-    //   orderStatus: !done ? "Chờ xử lý" : "Done",
-    //   payment: {},
-    //   vouche: vouche || "",
-    //   paymentAmount: vouche
-    //     ? String(productData?.data.price - disCount)
-    //     : productData?.data.price,
-    //   bankName: "NCB",
-    // });
-    localStorage.setItem("order", JSON.stringify(orderPayment));
+    }
+    const data = await addOrder(dataOrer);
     handelCheckVouche();
-    // handelUpdateVouche();
-    return handelPayMentVNPay();
+    return handelUpdateVouche();
   };
+  const getParam = (param = '') => {
+    const queryParameters = new URLSearchParams(window.location.search);
+    const dataPageQuery: string | null = queryParameters.get(param);
+    return dataPageQuery
+};
+
+const removeUrlParameters = () => {
+    const newUrl = window.location.origin + window.location.pathname;
+    window.history.pushState({}, document.title, newUrl);
+};
+const checkPayment = async () => {
+    if (getParam('vnp_ResponseCode') && getParam('vnp_ResponseCode') == "00") {
+
+         await checkPaymen();
+        notification.success({
+            message: 'Success',
+            description: 'Course payment successful!',
+        });
+        return true;
+
+    } else {
+        if (getParam('vnp_TxnRef')) {
+            // const [removeOrder] = useRemoveOrderMutation();
+            notification.error({
+                message: 'error',
+                description: 'Course payment failed!',
+            });
+            // removeUrlParameters();
+        }
+    }
+};
+
+if(count == 1){
+  checkPayment();
+ // removeUrlParameters();
+}
+console.log('PaymentSuccess', count);
+count++;
+
 
   return (
     <div
@@ -164,27 +193,19 @@ const Thong_tin_thanhtoan = () => {
           ))}
         </Drawer>
         <div className="text-center text-[30px] font-bold mb-10">
-          <h1 className="text-white ">Mở khóa toàn bộ khóa học</h1>
+          <h1 className="text-white ">Mua khóa học thành công </h1>
         </div>
         <div className="lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="col-span-8">
-            <p className="text-white mb-4">
-              Sở hữu khóa học HTML CSS đầy đủ và chi tiết nhất bạn có thể tìm
-              thấy trên Internet 🙌
-            </p>
-            <p className="text-white">
-              Có tới{" "}
-              <span className="text-[#5ebbff]">
-                hàng trăm bài tập thực hành{" "}
-              </span>
-              sau mỗi bài học và bạn sẽ được{" "}
-              <span className="text-[#5ebbff]">làm 8 dự án thực tế</span>
-              trong khóa học này. Với{" "}
-              <span className="text-[#5ebbff]">1000+ bài học</span>
-              (bao gồm video, bài tập, thử thách, flashcards, v.v) sẽ giúp bạn
-              nắm kiến thức nền tảng vô cùng chắc chắn.
-            </p>
             <div className="bg-[#202425] p-4 rounded-lg mt-6 space-y-4 ">
+            <p className="ml-2 text-white ">
+                Khóa học:{" "}
+                <span className="text-[#52eeee] text-[18px] font-bold ml-10">
+                    <p>
+                    {productData?.data.name}
+                    </p>
+                </span>
+              </p>
               <p className="ml-2 text-white ">
                 Giá bán:{" "}
                 <span className="text-[#52eeee] text-[18px] font-bold ml-10">
@@ -203,9 +224,7 @@ const Thong_tin_thanhtoan = () => {
               <p className="ml-2 border-[1px] text-white border-[#333c6d] border-b-0 border-r-0 border-l-0">
                 Tổng tiền:{" "}
                 <span className="text-[#52eeee] text-[18px] font-bold ml-10">
-                  {vouche ? (
-                    Number(productData?.data.price - disCount)
-                  ) : (
+                  {vouche ? (Number(productData?.data.price - disCount)) : (
                     <p>
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
@@ -224,19 +243,11 @@ const Thong_tin_thanhtoan = () => {
                 </button>
               </Link> */}
               <p
-                onClick={() => !isRequesting && checkPaymen()}
+               onClick={() => navigate("/")}
                 style={{ width: "100%" }}
               >
                 <button className="bg-gradient-to-b from-[#8951ff] to-[#21a2ff] text-white py-2 px-6 rounded-md font-bold">
-                  Thanh toán Vnpay
-                </button>
-              </p>
-              <p style={{ width: "100%" }}>
-                <button
-                  onClick={showDrawer}
-                  className="bg-gradient-to-b from-[#8951ff] to-[#21a2ff] text-white py-2 px-6 rounded-md font-bold"
-                >
-                  Sử dụng mã giảm giá
+                  Quay về trang chủ
                 </button>
               </p>
             </div>
@@ -287,4 +298,4 @@ const Thong_tin_thanhtoan = () => {
     </div>
   );
 };
-export default Thong_tin_thanhtoan;
+export default PaymentSuccess;

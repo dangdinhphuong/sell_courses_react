@@ -73,7 +73,8 @@ const ProductDetail = () => {
   const userHasPurchasedCourse = userDb?.product?.some(
     (product) => product._id === idProduct
   );
-  console.log("userHasPurchasedCourse", userDb);
+  console.log("userDb", userDb);
+  console.log("userHasPurchasedCourse", userHasPurchasedCourse);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const [addCourseProgress] = useAddCourseprogressMutation();

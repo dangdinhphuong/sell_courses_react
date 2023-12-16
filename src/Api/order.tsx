@@ -29,13 +29,14 @@ const orderApi = createApi({
       invalidatesTags: ["Order"],
     }),
     addOrder: builder.mutation<any, any>({
-      query: ({ course, user, paymentAmount, bankName , orderStatus }) => ({
+      query: ({ course, user, paymentAmount, bankName , orderStatus , paymentCode}) => ({
         url: `/order`,
         method: "POST",
         body: {
           course: course,
           user: user,
           orderStatus : orderStatus,
+          paymentCode:paymentCode,
           payment: {
             paymentAmount: paymentAmount,
             bankName: bankName,
