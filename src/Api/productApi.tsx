@@ -14,7 +14,11 @@ const productApi = createApi({
     }),
     endpoints: (builder) => ({
         getProducts: builder.query<IProductApiResponse, void>({
-            query: () => `/product`,
+            query: (data = {}) => ({
+                url: `/product`,
+                method: 'GET',
+                params: data
+            }),
             providesTags: ['Product']
         }),
         getProductsByPrice: builder.query<IProductApiResponse, void>({
@@ -59,7 +63,15 @@ const productApi = createApi({
                 body: formData, // Sử dụng formData làm nội dung yêu cầu
             }),
             invalidatesTags: ['Product'],
-        })
+        }),
+        updateProductShowWeb: builder.mutation<IProduct, IProduct>({
+            query: (_id, product) => ({
+                url: `/product/update-show-web/${_id}`,
+                method: "POST",
+                body: product
+            }),
+            invalidatesTags: ['Product']
+        }),
 
     })
 });
@@ -72,7 +84,8 @@ export const {
     useRemoveProductMutation,
     useAddProductMutation,
     useUpdateProductMutation,
-    useAddOrderDetailMutation
+    useAddOrderDetailMutation,
+    useUpdateProductShowWebMutation
 } = productApi;
 export const productReducer = productApi.reducer;
 export default productApi;

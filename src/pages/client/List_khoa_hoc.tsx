@@ -8,7 +8,7 @@ import { Category } from "@/interface/categorys";
 import { RaceBy } from '@uiball/loaders'
 import { useMediaQuery } from '@react-hook/media-query';
 const ListKhoaHoc = () => {
-  const { data: productData, error, isLoading: productIsLoading, } = useGetProductsQuery();
+  const { data: productData, error, isLoading: productIsLoading, } = useGetProductsQuery({ isShow: true });
   const [showFullDescription, setShowFullDescription] = useState(false);
   const { data: categoryData } = useGetCategorysQuery();
   const [selectedCategory, setSelectedCategory] = useState<string | number | null>(null);
@@ -119,7 +119,7 @@ const ListKhoaHoc = () => {
             </div>
 
             <div className="col-span-2 hidden lg:block ">
-             
+
               <div className="mt-10">
                 {categoryData?.data?.map((category) => (
                   <button

@@ -1,6 +1,9 @@
 import {
   useGetProductsQuery,
   useRemoveProductMutation,
+
+
+
 } from "@/Api/productApi";
 import { IProduct } from "@/interface/products";
 import {
@@ -12,18 +15,23 @@ import {
   Dropdown,
   Space,
   Menu,
+  Switch,
+  Input,
+  Select
 } from "antd";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { IoTrashOutline } from "react-icons/io5";
 import { AiOutlineEdit } from "react-icons/ai";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaSearch } from "react-icons/fa";
 import { AiOutlineEye, AiFillEye } from "react-icons/ai";
-import { useState } from "react";
-
+import { useState, useMemo, useEffect } from "react";
+import { isEmpty } from "@/utils/validate"
+import { formatNumber } from "@/utils/formats"
 import "./index.css";
 const Listproduct = () => {
   const [free, setFree] = useState(true);
+  const [query, setQuery] = useState()
   const handleBulkDelete = () => {
     // Kiểm tra xem có ô trống nào được chọn không
     if (checkedIds.length === 0) {
@@ -55,13 +63,11 @@ const Listproduct = () => {
       }
     });
   };
-
   const handleMenuItemClick = ({ key, _id }: any) => {
     if (key === "1") {
     } else if (key === "2") {
     }
   };
-
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
 
   const handleCheckboxChange = (id: number) => {
@@ -74,10 +80,30 @@ const Listproduct = () => {
     }
     console.log("đã lấy được id:", id);
   };
+  const onChangeShowWeb = (obj: any) => {
+    const index = dataSource.findIndex(item => item._id == obj._id)
+    console.log(dataSource);
 
-  const { data: productData, isLoading } = useGetProductsQuery();
+    console.log("index", index);
+
+    const objNew = { ...obj, isShowWeb: 1 }
+
+    dataSource[index] = objNew
+    console.log(obj);
+  };
+  const { data: productData, isLoading, refetch: refetchProductData } = useGetProductsQuery(query);
   console.log("productdata:", productData);
-
+  const onChangeSearchName = (e) => {
+    console.log(e.target.value);
+    setQuery((prev) => {
+      return { ...prev, q: e.target.value }
+    })
+  }
+  const onChangeSelect = (val) => {
+    setQuery((prev) => {
+      return { ...prev, type: val }
+    })
+  }
   const [
     removeProduct,
     { isLoading: isRemoveLoading, isSuccess: isRemoveSuccess },
@@ -112,18 +138,22 @@ const Listproduct = () => {
       label: "Danh sách bình Luận",
     },
   ];
-  const dataSource = free
-    ? productData?.data?.filter((data) => data.price !== "0")
-    : productData?.data
+  const dataSource = useMemo(() => {
+    const result = free
+      ? productData?.data?.filter((data) => data.price !== "0")
+      : productData?.data
         ?.filter((data) => data.price == "0")
-        .map(({ _id, name, price, img, description }: IProduct) => ({
+        .map(({ _id, name, price, img, description, isShowWeb }: IProduct) => ({
           key: _id,
           name,
           price,
           img,
           description,
           id: _id,
+          isShowWeb
         })) || [];
+    return result
+  }, [free, productData])
   console.log("datasoure :", dataSource);
   const columns = [
     {
@@ -138,6 +168,7 @@ const Listproduct = () => {
       title: "Giá",
       dataIndex: "price",
       key: "price",
+      render: (text: any) => (<p>{formatNumber(text)}đ</p>)
     },
     {
       title: "Mô Tả",
@@ -153,10 +184,24 @@ const Listproduct = () => {
         <Image src={img} alt="Ảnh" width={95} height={70} />
       ),
     },
+    {
+      title: "Trạng thái hiển thị",
+      dataIndex: "isShowWeb",
+      key: "isShowWeb",
+      render: (text: any, record) => <div>
+        {text != 1 ?
+          <button className="bg-green-700 hover:bg-green-600 hover:text-white  text-white font-bold py-1 px-4 border border-green-600 rounded w-40 h-10">Hiển thị</button>
+          :
+          <button className="bg-red-700 hover:bg-red-600 hover:text-white  text-white font-bold py-1 px-4 border border-red-600 rounded w-40 h-10">Không hiển thị</button>
 
+        }
+      </div>
+      ,
+
+    },
     {
       title: "",
-      render: ({ key: _id }: any) => {
+      render: ({ _id }: any) => {
         return (
           <>
             <div className="flex items-center justify-center mr-auto">
@@ -217,13 +262,15 @@ const Listproduct = () => {
       },
     },
   ];
-
+  const handleFilter = () => {
+    refetchProductData()
+  }
   return (
     <div>
-      <div className="space-x-5 mb-5">
+      {/* <div className="space-x-5 mb-5">
         <Button onClick={() => setFree(false)}>Miễn phí</Button>
         <Button onClick={() => setFree(true)}>Có phí</Button>
-      </div>
+      </div> */}
 
       <header className="mb-4 flex justify-between items-center">
         <h2 className="font-bold text-2xl">Quản lý khóa học</h2>
@@ -245,12 +292,35 @@ const Listproduct = () => {
         >
           Xóa Chọn
         </Button>
+
       </header>
+      <div className="flex mb-5 mt-10">
+        <div className="mr-5">
+          <Input allowClear onChange={onChangeSearchName} style={{ width: 300 }}
+            placeholder="Tìm kiếm khóa học" />
+        </div>
+        <div className="mr-5">
+          <Select
+            onChange={onChangeSelect}
+            defaultValue="Tất cả"
+            style={{ width: 300 }}
+            options={[
+              { value: '1', label: 'Tất cả' },
+              { value: '2', label: 'Miễn Phí' },
+              { value: '3', label: 'Có phí' },
+            ]}
+          />
+        </div>
+        <button onClick={handleFilter} className="bg-green-700 hover:bg-green-600 hover:text-white  text-white font-bold py-1 px-4 border border-green-600 rounded flex items-center">
+          <FaSearch></FaSearch>
+          <span className="ml-1">Tìm kiếm</span>
+        </button>
+      </div>
       {isRemoveSuccess && <Alert message="Xóa Thành Công!" type="success" />}
       {isLoading ? (
         <Skeleton />
       ) : (
-        <Table dataSource={dataSource} columns={columns} />
+        <Table dataSource={productData?.data || []} columns={columns} />
       )}
     </div>
   );
