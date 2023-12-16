@@ -99,19 +99,21 @@ const PaymentSuccess = () => {
   };
 
   const checkPaymen = async () => {
-    const data = await addOrder({
-      paymentMethod: "Ví điện tử",
+    let code = getParam('vnp_TxnRef');
+    const dataOrer = {
+      paymentMethod: "Ví điện tử tataaaaaa",
       course: idProduct,
       user: checkUser._id,
       orderStatus: !done ? "Chờ xử lý" : "Done",
       payment: {},
-      paymentCode:"getParam('vnp_TxnRef')",
+      paymentCode:code,
       vouche: vouche || "",
       paymentAmount: vouche
-        ? String(productData?.data.price - disCount)
-        : productData?.data.price,
+          ? String(productData?.data.price - disCount)
+          : productData?.data.price,
       bankName: "NCB",
-    });
+    }
+    const data = await addOrder(dataOrer);
     handelCheckVouche();
     return handelUpdateVouche();
   };
@@ -127,7 +129,7 @@ const removeUrlParameters = () => {
 };
 const checkPayment = async () => {
     if (getParam('vnp_ResponseCode') && getParam('vnp_ResponseCode') == "00") {
-        paymentCode = getParam('vnp_TxnRef');
+
          await checkPaymen();
         notification.success({
             message: 'Success',
@@ -148,8 +150,8 @@ const checkPayment = async () => {
 };
 
 if(count == 1){
- checkPayment();
- removeUrlParameters();
+  checkPayment();
+ // removeUrlParameters();
 }
 console.log('PaymentSuccess', count);
 count++;
