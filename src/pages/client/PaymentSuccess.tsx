@@ -149,7 +149,7 @@ const checkPayment = async () => {
 
 if(count == 1){
  checkPayment();
-//  removeUrlParameters();
+ removeUrlParameters();
 }
 console.log('PaymentSuccess', count);
 count++;
