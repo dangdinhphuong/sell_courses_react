@@ -19,14 +19,14 @@ const EditProfile = () => {
     phoneNumber: number
   };
 
-  const handleChange = (info:any) => {
-    if (info.file.status === 'done') {
-      // Nếu bạn muốn xem trước hình ảnh ngay khi tệp đã tải lên thành công
-      setPreviewImage(URL.createObjectURL(info.file.originFileObj));
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
+  const handleChange = (info:any) => {    
+    // if (info.file.status === 'done') {
+    //   // Nếu bạn muốn xem trước hình ảnh ngay khi tệp đã tải lên thành công
+    //   setPreviewImage(URL.createObjectURL(info.file.originFileObj));
+    //   message.success(`${info.file.name} file uploaded successfully`);
+    // } else if (info.file.status === 'error') {
+    //   message.error(`${info.file.name} file upload failed.`);
+    // }
   };
 
   const beforeUpload = (file: any) => {
@@ -66,11 +66,11 @@ const EditProfile = () => {
           localStorage.setItem("userInfo", JSON.stringify(response));
         }
 
-        window.location.reload();
+        // window.location.reload();
 
       });
 
-    navigate(`/profile/${productData?._id}`, { replace: true });
+    // navigate(`/profile/${productData?._id}`, { replace: true });
 
   };
 
@@ -100,7 +100,7 @@ const EditProfile = () => {
                   <Input className="w-full h-[3rem]" />
                 </Form.Item>
 
-                <Form.Item label="  " className="mb-0">
+                <Form.Item label="Avatar" className="mb-0">
                   <Upload
                       showUploadList={false} // Ẩn danh sách tải lên mặc định của Ant Design
                       beforeUpload={beforeUpload}
@@ -110,8 +110,8 @@ const EditProfile = () => {
                       <Button icon={<UploadOutlined />}>Select Image</Button>
                   </Upload>
                     {previewImage && (
-                      <div>
-                        <img className="rounded-full object-contain" src={previewImage} style={{ width:75,height:75}} />
+                      <div className="mt-3">
+                        <img className="rounded-full object-cover" src={previewImage} style={{ width:50,height:50}} />
                       </div>
                     )}
                 </Form.Item>

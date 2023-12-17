@@ -51,7 +51,6 @@ const ProfileUser = () => {
       setUserInfo(JSON.parse(savedUser));
     }
   }, []);
-  console.log(userInfo);
   if (isLoading) {
     return (
       <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white">
@@ -147,7 +146,6 @@ const ProfileUser = () => {
                             {DataUser?.product
                               ?.filter((iten) => iten.price)
                               .map((items) => {
-                                console.log(items);
                                 return (
                                   <div className="">
                                     <Link to={`/detail/${items._id}`}>
