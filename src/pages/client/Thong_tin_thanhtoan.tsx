@@ -36,6 +36,7 @@ const Thong_tin_thanhtoan = () => {
   const [disCount, setDisCount] = useState(0);
   const [isRequesting, setIsRequesting] = useState(false);
   const [queryParameters] = useSearchParams();
+  const [infoVoucherUse, setInfoVoucherUse] = useState(Object);
   const [vorcherUse , setVorcherUse] = useState('');
   const [open, setOpen] = useState(false);
   const vouche: string | null = queryParameters.get("vouche");
@@ -61,9 +62,11 @@ const Thong_tin_thanhtoan = () => {
       let discountCal = (voucher.sale / 100) * productData?.data.price;
       setDisCount(discountCal);
       setVorcherUse(voucher?._id);
+      setInfoVoucherUse({voucher , discountCal: discountCal})
     }else{
       setDisCount(voucher.sale);
       setVorcherUse(voucher?._id);
+      setInfoVoucherUse({voucher , discountCal: voucher.sale})
     }
   }
 
@@ -116,6 +119,7 @@ const Thong_tin_thanhtoan = () => {
   };
 
   const checkPaymen = async () => {
+    localStorage.setItem('infoVorcher', JSON.stringify(infoVoucherUse));
     const orderPayment = {
       paymentMethod: "Ví điện tử",
       course: idProduct,
