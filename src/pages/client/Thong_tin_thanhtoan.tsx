@@ -98,16 +98,17 @@ const Thong_tin_thanhtoan = () => {
 
   const handelPayMentVNPay = async () => {
     const orderId = localStorage.getItem("orderId")?? "";
+    console.log(productData?.data.price - disCount);
     await axios
       .post(`http://localhost:8088/api/create-payment-vnpay`, {
         user: checkUser?._id as string,
         name: checkUser?.name,
         od: "done",
         id:orderId,
-        voucheId: infoVoucherUse.voucher ? infoVoucherUse.voucher._id : "", 
+        voucheId: infoVoucherUse.voucher ? infoVoucherUse.voucher._id : "Thanh toan đơn", 
         total: vouche
           ? String(productData?.data.price - disCount)
-          : productData?.data.price,
+          : productData?.data.price - disCount,
         paymentMethodId: "Ví điện tử",
         inforOrderShipping: {
           course: idProduct,
