@@ -387,7 +387,10 @@ const Dashboard = () => {
       title: "Giá Tiền",
       dataIndex: "paymentAmount",
       key: "paymentAmount",
-      render: (text: any) => `${text} VND`,
+      render: (text: any) => `${text?.toLocaleString('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+      })}`,
     },
     {
       title: "Thời Gian Mua",
@@ -495,8 +498,11 @@ const Dashboard = () => {
       dataIndex: "payment",
       key: "payment",
       render: (data: any) => {
-        console.log(data);
-        return <p>{data.paymentAmount}</p>;
+        return <p>{
+        new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(data.paymentAmount)}</p>;
       },
     },
     {
@@ -525,7 +531,6 @@ const Dashboard = () => {
       price: items?.course?.price,
       user: items?.user?.name,
     }));
-  console.log(totalYear)
   const columnsToTalDay = [
     {
       title: "Id",
@@ -639,9 +644,6 @@ const Dashboard = () => {
         <div>..... loading</div>
       ) : (
         <div>
-          <div className="flex justify-end mb-10">
-            <DatePicker.RangePicker onChange={onDateChange} />
-          </div>
           <div className="flex justify-center mb-10">
             <div className="flex gap-11">
               <div className="rounded-md border border-stroke bg-gradient-to-br from-[#18A5A7] to-[#BFFFC7] py-10 px-6 shadow-default dark:border-strokedark dark:bg-boxdark w-64">
@@ -760,7 +762,6 @@ const Dashboard = () => {
             <div className="col-span-2">
               <p className="flex justify-center mb-4 text-xl font-bold text-gray-800">Đơn hàng theo lịch </p>
               <div className="">
-
                 <Table
                   className="mt-5"
                   dataSource={dataSourceMoney}

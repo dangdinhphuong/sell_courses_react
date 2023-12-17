@@ -132,7 +132,7 @@ const Comment = React.memo(({ comment }: any) => {
             <input
               value={commentReply}
               onChange={(event) => setComment(event.target.value)}
-              className="mt-2 w-full h-10 rounded-lg border-2 border-gray-300"
+              className="mt-2 w-full h-10 outline-none pl-2 rounded-lg border-2 border-gray-300"
               placeholder="Viết bình luận của bạn..."
             />
             <Button htmlType="submit" className="mt-3"> Bình Luận </Button>
@@ -496,6 +496,8 @@ function Videodetail() {
   useEffect(() => {
     // Nạp danh sách ghi chú khi nó thay đổi
     if (notesData) {
+    console.log(notesData);
+    
       setNoteList(notesData);
     }
   }, [notesData]);
@@ -666,7 +668,10 @@ function Videodetail() {
       idCourse: idProduct,
     })
       .unwrap()
-      .then(() => message.success("Comment created successfully"));
+      .then((rep: any) => {
+        let demoNews = [...demo , rep]
+        setDemo(demoNews)
+      });
   };
   const uniqueComments = (comments) => {
     const unique = new Map();
@@ -934,7 +939,7 @@ function Videodetail() {
                             <div className="flex">
                               <strong className="mr-5">Ghi chú:</strong>
                               <div className="flex items-center">
-                                <h3 className="font-bold">{note?.minute}</h3><p>(giây)</p>
+                                <h3 className="font-bold">{note?.minute ? Math.ceil(note?.minute) : 0 }</h3><p>(giây)</p>
                               </div>
                             </div>
 
@@ -1288,8 +1293,6 @@ function Videodetail() {
             <h2 className="text-lg font-semibold">Bình luận đã gửi:</h2>
             <div className="mt-4">
               <div className="flex items-start space-x-2">
-                <p className="w-[55px]">
-                </p>
                 <div>
                   {demo
                     ?.filter((items: any) => items.status == "true")
