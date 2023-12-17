@@ -62,11 +62,11 @@ const Thong_tin_thanhtoan = () => {
       let discountCal = (voucher.sale / 100) * productData?.data.price;
       setDisCount(discountCal);
       setVorcherUse(voucher?._id);
-      setInfoVoucherUse({voucher , discountCal: discountCal})
+      setInfoVoucherUse({voucher , discountCal: discountCal,voucherId: voucher?._id})
     }else{
       setDisCount(voucher.sale);
       setVorcherUse(voucher?._id);
-      setInfoVoucherUse({voucher , discountCal: voucher.sale})
+      setInfoVoucherUse({voucher , discountCal: voucher.sale,voucherId: voucher?._id})
     }
   }
 
@@ -104,6 +104,7 @@ const Thong_tin_thanhtoan = () => {
         name: checkUser?.name,
         od: "done",
         id:orderId,
+        voucheId: infoVoucherUse.voucher ? infoVoucherUse.voucher._id : "", 
         total: vouche
           ? String(productData?.data.price - disCount)
           : productData?.data.price,
@@ -127,12 +128,12 @@ const Thong_tin_thanhtoan = () => {
       orderStatus: !done ? "Chờ xử lý" : "Done",
       payment: {},
       vouche: vouche || "",
+      voucheId: infoVoucherUse.voucher ? infoVoucherUse.voucher._id : "",
       paymentAmount: vouche
         ? String(productData?.data.price - disCount)
-        : productData?.data.price,
+        : String(productData?.data.price), // Make sure to convert to string
       bankName: "NCB",
     };
-
     // const data = await addOrder({
     //   paymentMethod: "Ví điện tử",
     //   course: idProduct,
@@ -148,7 +149,7 @@ const Thong_tin_thanhtoan = () => {
     localStorage.setItem("order", JSON.stringify(orderPayment));
     handelCheckVouche();
     // handelUpdateVouche();
-    return handelPayMentVNPay();
+   return handelPayMentVNPay();
   };
 
   return (
@@ -246,7 +247,7 @@ const Thong_tin_thanhtoan = () => {
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
-                      }).format(productData?.data.price)}
+                      }).format(productData?.data.price-disCount)}
                     </p>
                   )}
                 </span>
