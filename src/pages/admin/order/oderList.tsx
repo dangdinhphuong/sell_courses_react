@@ -11,23 +11,30 @@ const ListOrder = () => {
   const [dataSource, setDataSource] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [statusText, setStatusText] = useState("");
+  const [filltername, setName] = useState("");
   const [open, setOpen] = useState(false);
   const [free, setFree] = useState(true);
-console.log(orderData?.data);
+
 useEffect(() => {
   if (!orderData?.data) {
     return; // Exit early if there's no data
   }
-  const filteredData = free
-    ? orderData.data.filter((item) => item.payment.paymentAmount !== '0')
-    : orderData.data.filter((item) => item.payment.paymentAmount === '0');
-  const formattedData = filteredData.map(({ _id, course, user, orderStatus, orderDate, payment }: IOrder) => ({
+  let filteredData = free
+      ? orderData.data.filter((item) => item.payment.paymentAmount !== '0')
+      : orderData.data.filter((item) => item.payment.paymentAmount === '0');
+  if (filltername) {
+    // Reassign the result back to filteredData
+    filteredData = filteredData.filter((item) => item.course.name == filltername);
+  }
+  console.log('orderData',filltername,filteredData);
+  const formattedData = filteredData.map(({ _id, course, user, orderStatus,paymentCode, orderDate, payment }: IOrder) => ({
     key: _id,
     courseName: course?.name,
     userName: user?.name,
     userEmail: user?.email,
     userPhoneNumber: user?.phoneNumber,
     orderStatus,
+    paymentCode,
     paymentMethod: payment?.paymentMethod,
     paymentAmount: payment?.paymentAmount,
     orderDate,
@@ -88,6 +95,11 @@ useEffect(() => {
       key: "paymentMethod",
     },
     {
+      title: "Mã thanh toán",
+      dataIndex: "paymentCode",
+      key: "paymentCode"
+    },
+    {
       title: "Ngày đặt hàng",
       dataIndex: "orderDate",
       key: "orderDate",
@@ -135,8 +147,10 @@ useEffect(() => {
       </Button>
       </div>
       <div className="space-x-5 mb-5">
+
       <Button onClick={()=>setFree(false)}>Miễn phí</Button>
       <Button onClick={()=>setFree(true)}>Có phí</Button>
+        <input type="text" onChange ={(e)=>setName(e.target.value)} placeholder="Tên khóa học"></input>
       </div>
       {isLoading ? (
         <Skeleton />

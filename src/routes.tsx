@@ -46,6 +46,7 @@ import LT from "./pages/client/Lotrinh/LT";
 import LT_FE from "./pages/client/Lotrinh/LT_FE";
 import LT_BE from "./pages/client/Lotrinh/LT_BE";
 import Thong_tin_thanhtoan from "./pages/client/Thong_tin_thanhtoan";
+import PaymentSuccess from "./pages/client/PaymentSuccess";
 import ThanhToan from "./pages/client/ThanhToan";
 import ForgotPassword from "./components/Layouts/forgotPassword";
 import Blogs from "./pages/client/blogs";
@@ -209,6 +210,10 @@ export const router = createBrowserRouter([
     path: "Thongtinthanhtoan/:idProduct",
     element: <Thong_tin_thanhtoan />,
   },
+   {
+    path: "payment/status/:idProduct",
+    element: <PaymentSuccess />,
+  },
   {
     path: "ThanhToan/:idProduct",
     element: <ThanhToan />,
@@ -217,7 +222,6 @@ export const router = createBrowserRouter([
     path: "changePassword",
     element: <ChangePassword />,
   },
-
   {
     path: "/admin",
     element: (
