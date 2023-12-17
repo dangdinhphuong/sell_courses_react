@@ -42,7 +42,17 @@ const PaymentSuccess = () => {
   const voucheId: string | null = queryParameters.get("voucheId");
   const done: string | null = queryParameters.get("vnp_ResponseCode");
   let paymentCode: string | null = '';
-  console.log(done, "ttt");
+  let infoVorcher: any;
+
+if (localStorage.getItem("infoVorcher")) {
+  infoVorcher = JSON.parse(localStorage.getItem("infoVorcher"));
+ 
+} else {
+  infoVorcher = {
+    "discountCal": 0
+  }
+}
+console.log("infoVorcher",infoVorcher);
   const showDrawer = () => {
     setOpen(true);
   };
@@ -50,11 +60,11 @@ const PaymentSuccess = () => {
   const onClose = () => {
     setOpen(false);
   };
+  // Now you can use the infoVorcher variable, and it still contains the value
   const data: any = localStorage.getItem("userInfo");
   const orderId: any = localStorage.getItem("orderId");
   const navigate = useNavigate();
   const checkUser = JSON.parse(data).userData;
-  console.log(checkUser);
   const dataPageQuery: string | null = queryParameters.get(
     "vnp_ResponseCode=00"
   );
@@ -84,7 +94,7 @@ const PaymentSuccess = () => {
         user: checkUser?._id as string,
         name: checkUser?.name,
         od: "done",
-        orderId:orderId,
+        orderId: orderId,
         total: vouche
           ? String(productData?.data.price - disCount)
           : productData?.data.price,
@@ -106,11 +116,11 @@ const PaymentSuccess = () => {
       user: checkUser._id,
       orderStatus: !done ? "Chờ xử lý" : "Done",
       payment: {},
-      paymentCode:code,
+      paymentCode: code,
       vouche: vouche || "",
       paymentAmount: vouche
-          ? String(productData?.data.price - disCount)
-          : productData?.data.price,
+        ? String(productData?.data.price - disCount)
+        : productData?.data.price,
       bankName: "NCB",
     }
     const data = await addOrder(dataOrer);
@@ -121,40 +131,40 @@ const PaymentSuccess = () => {
     const queryParameters = new URLSearchParams(window.location.search);
     const dataPageQuery: string | null = queryParameters.get(param);
     return dataPageQuery
-};
+  };
 
-const removeUrlParameters = () => {
+  const removeUrlParameters = () => {
     const newUrl = window.location.origin + window.location.pathname;
     window.history.pushState({}, document.title, newUrl);
-};
-const checkPayment = async () => {
+  };
+  const checkPayment = async () => {
     if (getParam('vnp_ResponseCode') && getParam('vnp_ResponseCode') == "00") {
 
-         await checkPaymen();
-        notification.success({
-            message: 'Success',
-            description: 'Course payment successful!',
-        });
-        return true;
+      await checkPaymen();
+      notification.success({
+        message: 'Success',
+        description: 'Course payment successful!',
+      });
+      return true;
 
     } else {
-        if (getParam('vnp_TxnRef')) {
-            // const [removeOrder] = useRemoveOrderMutation();
-            notification.error({
-                message: 'error',
-                description: 'Course payment failed!',
-            });
-            // removeUrlParameters();
-        }
+      if (getParam('vnp_TxnRef')) {
+        // const [removeOrder] = useRemoveOrderMutation();
+        notification.error({
+          message: 'error',
+          description: 'Course payment failed!',
+        });
+        // removeUrlParameters();
+      }
     }
-};
+  };
 
-if(count == 1){
-  checkPayment();
- removeUrlParameters();
-}
-console.log('PaymentSuccess', count);
-count++;
+  if (count == 1) {
+      checkPayment();
+    //  removeUrlParameters();
+  }
+
+  count++;
 
 
   return (
@@ -198,12 +208,12 @@ count++;
         <div className="lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="col-span-8">
             <div className="bg-[#202425] p-4 rounded-lg mt-6 space-y-4 ">
-            <p className="ml-2 text-white ">
+              <p className="ml-2 text-white ">
                 Khóa học:{" "}
                 <span className="text-[#52eeee] text-[18px] font-bold ml-10">
-                    <p>
+                  <p>
                     {productData?.data.name}
-                    </p>
+                  </p>
                 </span>
               </p>
               <p className="ml-2 text-white ">
@@ -221,15 +231,39 @@ count++;
                   )}
                 </span>
               </p>
-              <p className="ml-2 border-[1px] text-white border-[#333c6d] border-b-0 border-r-0 border-l-0">
-                Tổng tiền:{" "}
+              <p className="ml-2 text-white">
+                Voucher:{" "}
+                {infoVorcher.voucher ? (
+                  <p className="p-3 bg-red-600 text-white rounded-md m-3">
+                    {infoVorcher.voucher.code} - {infoVorcher.voucher.type ? infoVorcher.voucher.sale + '%' : null}
+                  </p>
+                ) : null}
+              </p>
+
+              <p className="ml-2 text-white">
+                Giảm giá:{" "}
                 <span className="text-[#52eeee] text-[18px] font-bold ml-10">
-                  {vouche ? (Number(productData?.data.price - disCount)) : (
+                  {vouche ? (
+                    Number(productData?.data.price - disCount)
+                  ) : (
                     <p>
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
-                      }).format(productData?.data.price)}
+                      }).format(infoVorcher.discountCal)}
+                    </p>
+                  )}
+                </span>
+              </p>
+              <p className="ml-2 border-[1px] text-white border-[#333c6d] border-b-0 border-r-0 border-l-0">
+                Tổng tiền:{" "}
+                <span className="text-[#52eeee] text-[18px] font-bold ml-10">
+                  {vouche ? (Number(productData?.data.price - infoVorcher.discountCal)) : (
+                    <p>
+                      {new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(productData?.data.price - infoVorcher.discountCal)}
                     </p>
                   )}
                 </span>
@@ -243,7 +277,7 @@ count++;
                 </button>
               </Link> */}
               <p
-               onClick={() => navigate("/")}
+                onClick={() => navigate("/")}
                 style={{ width: "100%" }}
               >
                 <button className="bg-gradient-to-b from-[#8951ff] to-[#21a2ff] text-white py-2 px-6 rounded-md font-bold">
