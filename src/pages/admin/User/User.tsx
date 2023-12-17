@@ -266,13 +266,13 @@ const User = (props: Props) => {
               <Switch className="swidth-container" onChange={() => handleBlockUser(_id, isBlock, role)} checked={isBlock != 1} checkedChildren="Hoạt động" unCheckedChildren="Khóa" />
 
 
-              <Button
+              {/* <Button
                 className="w-9 h-8 pl-2 ml-2"
                 type='default'
                 onClick={() => confirm(_id)}
               >
                 <IoTrashOutline className="text-xl" />
-              </Button>
+              </Button> */}
               <Button className="w-9 h-8 pl-2 ml-2"
                 type='default'>
                 <Link to={`/admin/user/edit/${_id}`}>
@@ -280,14 +280,14 @@ const User = (props: Props) => {
                 </Link>
               </Button>
 
-              <label className="">
+              {/* <label className="">
                 <input
                   type="checkbox"
                   style={{}}
                   onChange={() => handleCheckboxChange(_id)}
                   className="w-6 h-6  mt-1 ml-1 checkbox-style"
                 />
-              </label>
+              </label> */}
             </div>
           </>
         );
