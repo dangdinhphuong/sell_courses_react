@@ -309,7 +309,6 @@ function Videodetail() {
       };
       addScore(scoreData).then((res) => {
         refetchCourseProgress()
-
       });
       const bodyFormHistory = {
         lessonId: idLesson,
@@ -418,6 +417,9 @@ function Videodetail() {
 
     // }
     // Lưu thời điểm hiện tại để so sánh lần sau
+    // console.log("reached90PercentRef________", reached90PercentRef);
+    // console.log("scoreData______________", scoreData);
+
     if (progress >= 90 && !reached90PercentRef) {
       setReached90PercentRef(true);
       const statusVideo = "hoàn thành video";
@@ -434,12 +436,18 @@ function Videodetail() {
         statusVideo,
       };
       // Gọi hàm addScore và xử lý kết quả
+      console.log("scoreData______________", scoreData);
+
       if (!scoreData) {
-        addScore(scoreDatacreate).then()
+        addScore(scoreDatacreate).then(res => {
+          refetchCourseProgress()
+        })
         refetchLessonData()
 
       } else if (scoreData && !scoreData.statusVideo) {
-        updateStatus({ id: idScore, statusVideo: statusVideo })
+        updateStatus({ id: idScore, statusVideo: statusVideo }).then(res => {
+          refetchCourseProgress()
+        })
         refetchLessonData()
       }
       // Add your specific logic here
@@ -462,6 +470,7 @@ function Videodetail() {
     }
   };
   const openModal = () => {
+    console.log("scoreData__________", scoreData, scoreData?.statusVideo, reached90PercentRef);
 
     if (scoreData?.statusVideo === "hoàn thành video" || reached90PercentRef) {
       if (currentIndex != 0) setCurrentIndex(0)

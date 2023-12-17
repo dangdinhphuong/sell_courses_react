@@ -18,6 +18,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import * as XLSX from "xlsx";
+import moment from "moment";
 
 export const exportToExcel = (data: any, fileName: any) => {
   console.log(data, "dataa");
@@ -45,6 +46,7 @@ export const exportToExcel = (data: any, fileName: any) => {
 };
 const Dashboard = () => {
   const [openTop, setOpenTop] = useState(false);
+  const [query, setQuery] = useState({})
   const [placement, setPlacement] = useState<DrawerProps['placement']>('top');
   const showDrawerTop = () => {
     setOpenTop(true);
@@ -70,10 +72,7 @@ const Dashboard = () => {
     startDate: "",
     endDate: "",
   });
-  const { data: moneyData } = useGetOderMoneyQuery({
-    startDate: loggerDate?.startDate,
-    endDate: loggerDate?.endDate,
-  });
+  const { data: moneyData } = useGetOderMoneyQuery(query);
   console.log(moneyData?.data?.docs, "pl");
   const [options5, setoptions5] = useState({
     page: 1,
@@ -445,6 +444,22 @@ const Dashboard = () => {
       user: items?.user?.name,
     })
   );
+  const handleSearchDate = val => {
+    console.log("val________", val)
+
+    if (val) {
+      const startDate = moment(val[0].$d).format("YYYY-MM-DDTHH:mm:ss.SSSZ")
+      const endDate = moment(val[1].$d).format("YYYY-MM-DDTHH:mm:ss.SSSZ")
+      console.log(startDate, endDate)
+      setQuery(prev => {
+        return { ...prev, startDate: startDate, endDate: endDate }
+      })
+    } else {
+      setQuery({})
+    }
+
+
+  }
   const columnsMoney = [
     {
       title: "Id",
@@ -499,10 +514,10 @@ const Dashboard = () => {
       key: "payment",
       render: (data: any) => {
         return <p>{
-        new Intl.NumberFormat("vi-VN", {
-          style: "currency",
-          currency: "VND",
-        }).format(data.paymentAmount)}</p>;
+          new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(data.paymentAmount)}</p>;
       },
     },
     {
@@ -760,6 +775,9 @@ const Dashboard = () => {
               <HighchartsReact highcharts={Highcharts} options={options} />
             </div>
             <div className="col-span-2">
+              <div className="mr-5">
+                <DatePicker.RangePicker onChange={handleSearchDate} />
+              </div>
               <p className="flex justify-center mb-4 text-xl font-bold text-gray-800">Đơn hàng theo lịch </p>
               <div className="">
                 <Table
