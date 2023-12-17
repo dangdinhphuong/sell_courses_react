@@ -22,6 +22,7 @@ import { Button, Drawer } from "antd";
 import { useGetOneUserQuery } from "@/Api/userApi";
 import useQueryParams from "../customHook";
 import axios from "axios";
+
 const Thong_tin_thanhtoan = () => {
   const backgroundStyle = {
     backgroundImage: "url(../../../public/img/bg.png)",
@@ -35,11 +36,12 @@ const Thong_tin_thanhtoan = () => {
   const [disCount, setDisCount] = useState(0);
   const [isRequesting, setIsRequesting] = useState(false);
   const [queryParameters] = useSearchParams();
+  const [infoVoucherUse, setInfoVoucherUse] = useState(Object);
+  const [vorcherUse , setVorcherUse] = useState('');
   const [open, setOpen] = useState(false);
   const vouche: string | null = queryParameters.get("vouche");
   const voucheId: string | null = queryParameters.get("voucheId");
   const done: string | null = queryParameters.get("vnp_ResponseCode");
-  console.log(done, "ttt");
   const showDrawer = () => {
     setOpen(true);
   };
@@ -47,14 +49,32 @@ const Thong_tin_thanhtoan = () => {
   const onClose = () => {
     setOpen(false);
   };
+
   const data: any = localStorage.getItem("userInfo");
   const orderId: any = localStorage.getItem("orderId");
   const navigate = useNavigate();
   const checkUser = JSON.parse(data).userData;
-  console.log(checkUser);
   const dataPageQuery: string | null = queryParameters.get(
     "vnp_ResponseCode=00"
   );
+  const handleDiscount = (voucher: any , index: any) => {
+    if(voucher.type){
+      let discountCal = (voucher.sale / 100) * productData?.data.price;
+      setDisCount(discountCal);
+      setVorcherUse(voucher?._id);
+      setInfoVoucherUse({voucher , discountCal: discountCal})
+    }else{
+      setDisCount(voucher.sale);
+      setVorcherUse(voucher?._id);
+      setInfoVoucherUse({voucher , discountCal: voucher.sale})
+    }
+  }
+
+  const handleRemoveDiscount = () => {
+    setVorcherUse('');
+    setDisCount(0);
+  }
+
   const handelCheckVouche = async () => {
     await axios.get(
       `http://localhost:8088/api/voucher/user/${checkUser?._id}/${voucheId}`
@@ -66,6 +86,8 @@ const Thong_tin_thanhtoan = () => {
     });
   };
   const [addOrder] = useAddOrderMutation();
+  const { data: dataUSer } = useGetOneUserQuery(checkUser._id);
+
   useEffect(() => {
     if (done) {
       axios.put(`http://localhost:8088/api/order/${orderId}`, {
@@ -73,7 +95,7 @@ const Thong_tin_thanhtoan = () => {
       });
     }
   }, [done, orderId]);
-  const { data: dataUSer } = useGetOneUserQuery(checkUser._id);
+
   const handelPayMentVNPay = async () => {
     const orderId = localStorage.getItem("orderId")?? "";
     await axios
@@ -97,6 +119,7 @@ const Thong_tin_thanhtoan = () => {
   };
 
   const checkPaymen = async () => {
+    localStorage.setItem('infoVorcher', JSON.stringify(infoVoucherUse));
     const orderPayment = {
       paymentMethod: "Ví điện tử",
       course: idProduct,
@@ -134,35 +157,6 @@ const Thong_tin_thanhtoan = () => {
       style={backgroundStyle}
     >
       <div className=" px-6 py-6 lg:p-24 mx-auto lg:w-[1200px] h-full">
-        <Drawer
-          width={400}
-          title="Áp dụng mã giảm giá"
-          placement="right"
-          onClose={onClose}
-          open={open}
-        >
-          {dataUSer?.voucher?.map((items: any) => (
-            <div key={items?._id}>
-              <div className="flex items-center justify-between bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-md mb-2">
-                <p className="p-3 bg-black text-white rounded-md m-3">{items.code}</p>
-                <Button
-                  onClick={() => {
-                    setDisCount(items?.sale);
-                    return navigate({
-                      search: createSearchParams({
-                        vouche: items?.sale,
-                        voucheId: items?._id,
-                      }).toString(),
-                    });
-                  }}
-                  className="mr-3"
-                >
-                  <span className="font-bold">Sử dụng</span>
-                </Button>
-              </div>
-            </div>
-          ))}
-        </Drawer>
         <div className="text-center text-[30px] font-bold mb-10">
           <h1 className="text-white ">Mở khóa toàn bộ khóa học</h1>
         </div>
@@ -184,12 +178,49 @@ const Thong_tin_thanhtoan = () => {
               (bao gồm video, bài tập, thử thách, flashcards, v.v) sẽ giúp bạn
               nắm kiến thức nền tảng vô cùng chắc chắn.
             </p>
+            <div className="mt-4">
+              {dataUSer?.voucher?.map((items: any , index: any) => (
+              <div key={items?._id}>
+                <div className={vorcherUse && vorcherUse != items?._id ? 'opacity-75 flex items-center justify-between bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-md mb-2' : 'flex items-center justify-between bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-md mb-2'}>
+                  <p className="p-3 bg-red-600 text-white rounded-md m-3">{items.code} - {items.type ?  items.sale + '%' 
+                  : new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(Number(items.sale))}</p>
+                  <div className="flex">
+                    <Button
+                      disabled={vorcherUse}
+                      onClick={() => {
+                        handleDiscount(items, index);
+                      }}
+                      className="mr-3"
+                    >
+                      <span className="font-bold">{vorcherUse == items?._id ? 'Đã sử dụng' : 'Sử dụng'}</span>
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        handleRemoveDiscount();
+                      }}
+                      className={vorcherUse != items?._id ? 'hidden mr-3' : 'mr-3'}
+                    >
+                      <span className="font-bold">Bỏ voucher</span>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+            </div>
             <div className="bg-[#202425] p-4 rounded-lg mt-6 space-y-4 ">
               <p className="ml-2 text-white ">
                 Giá bán:{" "}
                 <span className="text-[#52eeee] text-[18px] font-bold ml-10">
                   {vouche ? (
-                    Number(productData?.data.price - disCount)
+                    <p>
+                      {new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(Number(productData?.data.price - disCount))}
+                    </p>
                   ) : (
                     <p>
                       {new Intl.NumberFormat("vi-VN", {
@@ -204,7 +235,12 @@ const Thong_tin_thanhtoan = () => {
                 Tổng tiền:{" "}
                 <span className="text-[#52eeee] text-[18px] font-bold ml-10">
                   {vouche ? (
-                    Number(productData?.data.price - disCount)
+                    <p>
+                     {new Intl.NumberFormat("vi-VN", {
+                       style: "currency",
+                       currency: "VND",
+                     }).format(Number(productData?.data.price - disCount))}
+                   </p>
                   ) : (
                     <p>
                       {new Intl.NumberFormat("vi-VN", {
@@ -231,17 +267,9 @@ const Thong_tin_thanhtoan = () => {
                   Thanh toán Vnpay
                 </button>
               </p>
-              <p style={{ width: "100%" }}>
-                <button
-                  onClick={showDrawer}
-                  className="bg-gradient-to-b from-[#8951ff] to-[#21a2ff] text-white py-2 px-6 rounded-md font-bold"
-                >
-                  Sử dụng mã giảm giá
-                </button>
-              </p>
             </div>
           </div>
-          <div className="col-span-4 mt-10 md:mt-0  text-white p-0.5  rounded-lg bg-gradient-to-l from-[#8951ff] to-[#21a2ff]">
+          <div className="col-span-4 mt-10 md:mt-0  text-white p-0.5  rounded-lg">
             <div className="bg-[#323c4a] p-4 rounded-lg">
               <div className="text-center font-bold text-[20px] ">
                 <p className="mb-4">Bạn sẽ nhận được gì?</p>
