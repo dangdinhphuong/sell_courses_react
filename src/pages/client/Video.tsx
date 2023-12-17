@@ -180,9 +180,7 @@ function Videodetail() {
     };
     handelFetchCOmment();
   }, []);
-  useEffect(() => {
-    if (isShowTest) setIsShowTest(false)
-  }, [idLesson])
+
   const { idUser } = useParams<{ idUser: string }>();
   const { data: Courseprogress, refetch: refetchCourseProgress } = useGetCourseprogressByIdQuery({
     productId: idProduct,
@@ -360,7 +358,11 @@ function Videodetail() {
   const [currentTime, setCurrentTime] = useState(0);
   const [reached90PercentRef, setReached90PercentRef] = useState(false);
   const idScore = scoreData?._id;
+  useEffect(() => {
+    if (isShowTest) setIsShowTest(false)
+    if (reached90PercentRef) setReached90PercentRef(false)
 
+  }, [idLesson])
   // useEffect(() => {
   //   const video = document.querySelector("video");
   //   if (video) {
@@ -503,13 +505,14 @@ function Videodetail() {
 
     }
   }, [lessonData]);
+
   // Hàm tính điểm
   // NoteLesson
   useEffect(() => {
     // Nạp danh sách ghi chú khi nó thay đổi
     if (notesData) {
-    console.log(notesData);
-    
+      console.log(notesData);
+
       setNoteList(notesData);
     }
   }, [notesData]);
@@ -679,7 +682,7 @@ function Videodetail() {
     })
       .unwrap()
       .then((rep: any) => {
-        let demoNews = [...demo , rep]
+        let demoNews = [...demo, rep]
         setDemo(demoNews)
       });
   };
@@ -949,7 +952,7 @@ function Videodetail() {
                             <div className="flex">
                               <strong className="mr-5">Ghi chú:</strong>
                               <div className="flex items-center">
-                                <h3 className="font-bold">{note?.minute ? Math.ceil(note?.minute) : 0 }</h3><p>(giây)</p>
+                                <h3 className="font-bold">{note?.minute ? Math.ceil(note?.minute) : 0}</h3><p>(giây)</p>
                               </div>
                             </div>
 
@@ -1277,7 +1280,7 @@ function Videodetail() {
                   <div className="avatar-container">
                     <img src={userInfo.userData.img} alt="" />
                     <p className="font-semibold">{userInfo.userData.name}</p>
-                  </div> 
+                  </div>
                 </div>
 
                 <form onSubmit={handelCreateComment}>
