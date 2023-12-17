@@ -323,7 +323,6 @@ const Lesson_video = () => {
         <div className="pt-[88px]">
           <div className="lg:flex lg:flex-row-reverse bg-white lg:px-10 px-2 pt-10 lg:p-10 gap-8 ">
 
-
             {/* Danh sách video chưa được chiếu */}
             <div className="lg:w-2/5 p-8">
               <h2 className="text-2xl font-semibold mb-4">

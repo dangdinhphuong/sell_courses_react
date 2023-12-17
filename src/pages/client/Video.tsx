@@ -99,17 +99,15 @@ const Comment = React.memo(({ comment }: any) => {
   return (
     <div className="comment">
       <div className="comment-content mb-4">
-        <div className="flex items-start ">
+        <div className="grid grid-cols-1">
           <div className="avatar-container1">
             <img src={comment.user?.img} alt="" />
           </div>
-          <div className="flex flex-col items-end">
+          <div className="flex-col items-end">
             <div className="flex flex-col items-start flex1">
               <p className="font-bold text-xs">{comment.user?.name}</p>
               <p>{comment?.name}</p>
-              <p>{vsv}</p>
             </div>
-
             <div
               className="text-xs text-xs1 font-serif mt-1"
               onClick={() => {
@@ -445,8 +443,22 @@ function Videodetail() {
       // Add your specific logic here
     }
   };
+  const handleSeeking = () => {
+    // Lưu thời gian trước khi bắt đầu tua
+    setPrevTime(videoRef.current.currentTime);
+  };
 
-
+  const handleSeeked = () => {
+    // Kiểm tra điều kiện tua quá nhanh
+    const currentTime = videoRef.current.currentTime;
+    if (Math.abs(currentTime - prevTime) > 5) {
+      // Nếu tua quá nhanh, đặt lại thời gian video
+      videoRef.current.currentTime = prevTime;
+      alert('Cảnh báo: Bạn đã tua video quá nhanh!')
+      console.log('Cảnh báo: Bạn đã tua video quá nhanh!');
+      // Thêm mã xử lý hoặc hiển thị cảnh báo của bạn ở đây
+    }
+  };
   const openModal = () => {
 
     if (scoreData?.statusVideo === "hoàn thành video" || reached90PercentRef) {
@@ -560,8 +572,6 @@ function Videodetail() {
             video: lessonData?.data.video || "",
             minute: currentTime
           };
-
-          console.log("Data sent from client when adding a new note:", newNote);
 
           try {
             const response = await addNoteMutation(newNote);
@@ -1264,17 +1274,16 @@ function Videodetail() {
               {/* Phần nhập và gửi bình luận mới */}
               <div className="mt-4">
                 <div className="flex items-start space-x-2">
-
                   <div className="avatar-container">
                     <img src={userInfo.userData.img} alt="" />
                     <p className="font-semibold">{userInfo.userData.name}</p>
-                  </div>
+                  </div> 
                 </div>
 
                 <form onSubmit={handelCreateComment}>
                   <input
                     onChange={(event: any) => setComment(event.target.value)}
-                    className="mt-2 w-full h-10 rounded-lg border-2 border-gray-300 "
+                    className="mt-2 w-full h-10 rounded-lg border-2 pl-3 outline-none border-gray-300 "
                     placeholder="Viết bình luận của bạn..."
                   />
                   <button

@@ -39,12 +39,10 @@ type UserType = {
 const LayoutlClinet = () => {
   const idc = localStorage.getItem('userInfo')
   const r = JSON.parse(idc)
-  console.log(r)
   const { data: productData, error, isLoading } = useGetProductsQuery();
   const { data: BlogData } = useGetAllBlogQuery();
   const { idUser } = useParams<{ idUser: string }>();
   const { data: DataUser } = useGetOneUserQuery(r?.userData?._id || "");
-  console.log(DataUser,"l")
   const navigate = useNavigate();
   const dataSource = BlogData?.map((Blog: IBlog) => ({
     key: Blog._id,

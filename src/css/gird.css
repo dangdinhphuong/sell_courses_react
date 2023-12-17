@@ -10,6 +10,9 @@
 .gap-8 {
   grid-gap: 32px;
 }
+.grid-comment{
+  grid-template-columns: 70px auto;
+}
 .column {
   border: 1px solid #000;
 }
