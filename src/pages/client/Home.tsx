@@ -43,35 +43,35 @@ const removeUrlParameters = () => {
   window.location.reload();
 };
 
-const checkPayment = async () => {
+// const checkPayment = async () => {
 
-  if (getParam('vnp_ResponseCode') && getParam('vnp_ResponseCode') == "00") {
-    notification.success({
-      message: 'Success',
-      description: 'Course payment successful!',
-    });
-    removeUrlParameters();
-  } else {
-    if (getParam('vnp_TxnRef')) {
-      // const [removeOrder] = useRemoveOrderMutation();
-      const orderId: string | null = getParam('vnp_TxnRef');
-      axios.delete(`http://localhost:8088/api/order/${orderId}`)
-        .then(response => {
-          console.log('DELETE request successful', response.data);
-        })
-        .catch(error => {
-          console.error('Error making DELETE request', error);
-        });
-      notification.error({
-        message: 'error',
-        description: 'Course payment failed!',
-      });
-      removeUrlParameters();
-    }
-  }
-};
+//   if (getParam('vnp_ResponseCode') && getParam('vnp_ResponseCode') == "00") {
+//     notification.success({
+//       message: 'Success',
+//       description: 'Course payment successful!',
+//     });
+//     removeUrlParameters();
+//   } else {
+//     if (getParam('vnp_TxnRef')) {
+//       // const [removeOrder] = useRemoveOrderMutation();
+//       const orderId: string | null = getParam('vnp_TxnRef');
+//       axios.delete(`http://localhost:8088/api/order/${orderId}`)
+//         .then(response => {
+//           console.log('DELETE request successful', response.data);
+//         })
+//         .catch(error => {
+//           console.error('Error making DELETE request', error);
+//         });
+//       notification.error({
+//         message: 'error',
+//         description: 'Course payment failed!',
+//       });
+//       removeUrlParameters();
+//     }
+//   }
+// };
 
-checkPayment();
+// checkPayment();
 
 const List_khoa_hoc = () => {
   const [user, setUser] = useState(null);
