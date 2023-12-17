@@ -53,6 +53,8 @@ const Dashboard = () => {
     setOpenTop(false);
   };
   const { data: productData, isLoading } = useGetProductsQuery();
+  console.log("productsssssssssssssssssssssss", productData);
+
   const navigate = useNavigate();
   const [alltotal, setAltotal] = useState(false);
   const [open, setOpen] = useState(false);
@@ -97,15 +99,15 @@ const Dashboard = () => {
   let totalRevenue = 0;
   let arrDataOnday: any[] = [];
   const { data: orderData }: any = useGetOrdersQuery();
-  let totalYear : any[] = []
-  const demo = orderData?.data?.filter((items:any)=> items.orderStatus == "Done")
+  let totalYear: any[] = []
+  const demo = orderData?.data?.filter((items: any) => items.orderStatus == "Done")
     ?.map((item: any) => {
       totalYear.push(item)
       return Number(item.payment.paymentAmount);
     })
     .reduce((total: any, order: any) => total + order, 0);
   console.log(totalYear)
-  const getDataDay = orderData?.data?.filter((items:any)=> items.orderStatus == "Done")?.map((item: any) => {
+  const getDataDay = orderData?.data?.filter((items: any) => items.orderStatus == "Done")?.map((item: any) => {
     const paymentDate = item.payment.paymentDate.split("T")[0];
     const paymentAmount = item.payment.paymentAmount;
     if (paymentDate === todayDate) {
@@ -157,7 +159,7 @@ const Dashboard = () => {
       try {
         const { data } = await axios.get("http://localhost:8088/api/revenue");
         const processedData = processRevenueData(data);
-        setCourseRevenues(processedData);
+        // setCourseRevenues(processedData);
       } catch (error) {
         console.error("Error fetching revenue data:", error);
       }
@@ -179,6 +181,7 @@ const Dashboard = () => {
         return revenue;
       });
       setCourseNames(courseNames);
+      console.log("courseRevenues x1", courseRevenues)
       setCourseRevenues(courseRevenues);
     }
   }, [productData, orderData]);
@@ -251,13 +254,13 @@ const Dashboard = () => {
     { name: "Khoá Học Miễn Phí", y: dataFreeChart },
   ];
   // Hàm để lấy màu dựa trên index
-const getColorForIndex = (index) => {
-  // Điều chỉnh logic tạo màu tùy thuộc vào index
-  // Ví dụ đơn giản: sử dụng một mảng màu cố định
-  const colors = ['#3452eb'/* ... */];
-  
-  return colors[index % colors.length];
-};
+  const getColorForIndex = (index) => {
+    // Điều chỉnh logic tạo màu tùy thuộc vào index
+    // Ví dụ đơn giản: sử dụng một mảng màu cố định
+    const colors = ['#3452eb'/* ... */];
+
+    return colors[index % colors.length];
+  };
   const columnOptions = {
     chart: {
       type: "column",
@@ -280,7 +283,23 @@ const getColorForIndex = (index) => {
         pointPadding: 0.1, // Điều chỉnh khoảng cách giữa các cột
         groupPadding: 0.2, // Điều chỉnh khoảng cách giữa các nhóm cột
         colorByPoint: true, // Chọn màu cho mỗi cột
-        data: courseRevenues?.map((revenue:any, index) => ({
+        data: [
+          1100000,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          30000,
+          0,
+          0,
+          0
+        ]?.map((revenue: any, index) => ({
           y: revenue,
           color: getColorForIndex(index), // Hàm này trả về màu cho từng cột
         })),
@@ -321,24 +340,24 @@ const getColorForIndex = (index) => {
   const options = {
     chart: {
       type: "pie",
-    plotBackgroundColor: null,
-    plotBorderWidth: null,
-    plotShadow: false, // Kích thước chiều cao cố định
+      plotBackgroundColor: null,
+      plotBorderWidth: null,
+      plotShadow: false, // Kích thước chiều cao cố định
     },
     title: {
       text: "Biểu Đồ Thống Kê Khóa Học",
       align: 'center'
     },
-plotOptions: {
-    pie: {
+    plotOptions: {
+      pie: {
         allowPointSelect: true,
         cursor: 'pointer',
         dataLabels: {
-            enabled: false
+          enabled: false
         },
         showInLegend: true
-    }
-},
+      }
+    },
     series: [
       {
         name: "Số Lượng",
@@ -358,7 +377,7 @@ plotOptions: {
       dataIndex: "phone",
       key: "phone",
     },
-    
+
     {
       title: "Tên Khoá Học",
       dataIndex: "courseName",
@@ -382,16 +401,16 @@ plotOptions: {
   ];
   const data = orderData
     ? orderData.data
-        ?.map((order: any, index: any) => ({
-          key: index,
-          orderDate: order?.orderDate,
-          courseName: order?.course?.name,
-          paymentAmount: order.payment?.paymentAmount,
-          userName: order?.user?.name,
-          email:order?.user?.email,
-          phone:order?.user?.phoneNumber
-        }))
-        .sort((a: any, b: any) => new Date(b.orderDate) - new Date(a.orderDate))
+      ?.map((order: any, index: any) => ({
+        key: index,
+        orderDate: order?.orderDate,
+        courseName: order?.course?.name,
+        paymentAmount: order.payment?.paymentAmount,
+        userName: order?.user?.name,
+        email: order?.user?.email,
+        phone: order?.user?.phoneNumber
+      }))
+      .sort((a: any, b: any) => new Date(b.orderDate) - new Date(a.orderDate))
     : [];
   const onDateChange: RangePickerProps["onChange"] = (_, dateString) => {
     setLoggerDate({ startDate: dateString[0], endDate: dateString[1] });
@@ -403,7 +422,7 @@ plotOptions: {
     });
   };
   console.log(moneyData?.data?.docs)
-  let total = moneyData?.data?.docs?.filter((items : any)=> items.orderStatus == "Done").reduce((sum, item) => {
+  let total = moneyData?.data?.docs?.filter((items: any) => items.orderStatus == "Done").reduce((sum, item) => {
     return sum + Number(item?.payment?.paymentAmount || 0);
   }, 0);
   console.log(total)
@@ -436,7 +455,7 @@ plotOptions: {
       render: (text: string) => {
         let colorType = "";
         let textColor = ""; // Màu chữ cho trạng thái
-      
+
         switch (text.toLowerCase()) {
           case "update":
             colorType = "text-warning font-bold text-md";
@@ -453,14 +472,14 @@ plotOptions: {
           default:
             colorType = "text-blue font-bold text-md"; // Màu chữ mặc định cho trạng thái khác
         }
-      
+
         const style = {
           color: textColor, // Sử dụng màu chữ cho trạng thái "Thành công" và "Thất bại"
         };
-      
+
         return <p className={`${colorType}`} style={style}>{text}</p>;
       },
-      
+
     },
     {
       title: "Thanh Toán",
@@ -491,7 +510,7 @@ plotOptions: {
   ];
   const dataSourceTotalDay =
     arrDataOnday &&
-    arrDataOnday?.map((items: any, index:number) => ({
+    arrDataOnday?.map((items: any, index: number) => ({
       key: items._id,
       name: items?.course?.name,
       price: items?.course?.price,
@@ -500,13 +519,13 @@ plotOptions: {
 
   const dataSourceYear =
     totalYear &&
-    totalYear?.map((items: any, index:number) => ({
+    totalYear?.map((items: any, index: number) => ({
       key: items._id,
       name: items?.course?.name,
       price: items?.course?.price,
       user: items?.user?.name,
     }));
-    console.log(totalYear)
+  console.log(totalYear)
   const columnsToTalDay = [
     {
       title: "Id",
@@ -529,7 +548,7 @@ plotOptions: {
       key: "user",
     },
     {
-      render: ({ key:_id }: { key: string }) => (
+      render: ({ key: _id }: { key: string }) => (
         <Button
           style={{ paddingLeft: "4px" }}
           className="w-7 h-7 mr-2"
@@ -547,28 +566,28 @@ plotOptions: {
     <div className="bg-gray-100 p-6 rounded-md">
       <>
         <Drawer
-        title="Chi tiết doanh thu"
-        placement='right'
-        onClose={onCloseTop}
-        open={openTop}
-        width={800}
-      >
- <div>
-             <div className="flex justify-end">
-             <Button
+          title="Chi tiết doanh thu"
+          placement='right'
+          onClose={onCloseTop}
+          open={openTop}
+          width={800}
+        >
+          <div>
+            <div className="flex justify-end">
+              <Button
                 onClick={() => exportToExcel(totalYear, "all")}
                 className="mb-5"
               >
                 Xuất Excel
               </Button>
-             </div>
-              
-              <Table
-                dataSource={dataSourceYear}
-                columns={columnsToTalDay}
-              />
             </div>
-      </Drawer>
+
+            <Table
+              dataSource={dataSourceYear}
+              columns={columnsToTalDay}
+            />
+          </div>
+        </Drawer>
 
 
 
@@ -582,15 +601,15 @@ plotOptions: {
         >
           {alltotal ? (
             <>
-            <div className="flex justify-end">
-            <Button
-                onClick={() => exportToExcel(arrDataOnday, "test")}
-                className="mb-5"
-              >
-                Xuất Excel
-              </Button>
-            </div>
-              
+              <div className="flex justify-end">
+                <Button
+                  onClick={() => exportToExcel(arrDataOnday, "test")}
+                  className="mb-5"
+                >
+                  Xuất Excel
+                </Button>
+              </div>
+
               <Table
                 dataSource={dataSourceTotalDay}
                 columns={columnsToTalDay}
@@ -599,14 +618,14 @@ plotOptions: {
           ) : (
             <div>
               <div className="flex justify-end">
-              <Button
-                onClick={() => exportToExcel(moneyData?.data?.docs, "all")}
-                className="mb-5"
-              >
-                Xuất Excel
-              </Button>
+                <Button
+                  onClick={() => exportToExcel(moneyData?.data?.docs, "all")}
+                  className="mb-5"
+                >
+                  Xuất Excel
+                </Button>
               </div>
-              
+
               <Table
                 dataSource={dataSourceMoneyDymanic}
                 columns={columnsToTalDay}
@@ -620,160 +639,160 @@ plotOptions: {
         <div>..... loading</div>
       ) : (
         <div>
-           <div className="flex justify-end mb-10">
+          <div className="flex justify-end mb-10">
             <DatePicker.RangePicker onChange={onDateChange} />
-            </div>
-          <div className="flex justify-center mb-10">  
-          <div className="flex gap-11">
-          <div className="rounded-md border border-stroke bg-gradient-to-br from-[#18A5A7] to-[#BFFFC7] py-10 px-6 shadow-default dark:border-strokedark dark:bg-boxdark w-64">
-  <div className="">
-    <div>
-      <h4 className="text-title-md text-white font-bold text-black text-xl ">
-        Doanh Thu Tổng
-      </h4>
-    </div>
-    <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-      <img className="w-[60px]" src={""} alt="" />
-    </div>
-  </div>
-  <div className="flex items-end justify-between mt-4">
-    <div>
-      <h4 className="text-title-md text-white font-bold text-black text-lg">
-        {demo?.toLocaleString()} VND
-      </h4>
-      <p onClick={showDrawerTop} className="text-sm pt-2 font-medium underline tex-lg cursor-pointer text-white">
-        Total views
-      </p>
-    </div>
-  </div>
-</div>
+          </div>
+          <div className="flex justify-center mb-10">
+            <div className="flex gap-11">
+              <div className="rounded-md border border-stroke bg-gradient-to-br from-[#18A5A7] to-[#BFFFC7] py-10 px-6 shadow-default dark:border-strokedark dark:bg-boxdark w-64">
+                <div className="">
+                  <div>
+                    <h4 className="text-title-md text-white font-bold text-black text-xl ">
+                      Doanh Thu Tổng
+                    </h4>
+                  </div>
+                  <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
+                    <img className="w-[60px]" src={""} alt="" />
+                  </div>
+                </div>
+                <div className="flex items-end justify-between mt-4">
+                  <div>
+                    <h4 className="text-title-md text-white font-bold text-black text-lg">
+                      {demo?.toLocaleString()} VND
+                    </h4>
+                    <p onClick={showDrawerTop} className="text-sm pt-2 font-medium underline tex-lg cursor-pointer text-white">
+                      Total views
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-<div className="rounded-md border border-stroke bg-gradient-to-br from-[#6D678E] to-[#F6B5CC] py-10 px-6 shadow-default dark:border-strokedark dark:bg-boxdark w-64 text-white">
-  <div className="items-center">
-    <div>
-      <h4 className="text-title-md text-white font-bold text-black text-xl">
-        Doanh Thu Năm
-      </h4>
-    </div>
-    <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-      <img className="w-[60px]" src={""} alt="" />
-    </div>
-  </div>
-  <div className="flex items-end justify-between mt-4">
-    <div>
-      <h4 className="text-title-md text-white font-bold text-black text-lg">
-        {demo?.toLocaleString()} VND
-      </h4>
-      <p onClick={showDrawerTop} className="text-sm pt-2 font-medium underline text-lg cursor-pointer">
-        Total views
-      </p>
-    </div>
-  </div>
-</div>
+              <div className="rounded-md border border-stroke bg-gradient-to-br from-[#6D678E] to-[#F6B5CC] py-10 px-6 shadow-default dark:border-strokedark dark:bg-boxdark w-64 text-white">
+                <div className="items-center">
+                  <div>
+                    <h4 className="text-title-md text-white font-bold text-black text-xl">
+                      Doanh Thu Năm
+                    </h4>
+                  </div>
+                  <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
+                    <img className="w-[60px]" src={""} alt="" />
+                  </div>
+                </div>
+                <div className="flex items-end justify-between mt-4">
+                  <div>
+                    <h4 className="text-title-md text-white font-bold text-black text-lg">
+                      {demo?.toLocaleString()} VND
+                    </h4>
+                    <p onClick={showDrawerTop} className="text-sm pt-2 font-medium underline text-lg cursor-pointer">
+                      Total views
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-            <div className="rounded-md border border-stroke bg-gradient-to-br from-[#5D69BE] to-[#C89FEB] py-10 px-6 shadow-default dark:border-strokedark dark:bg-boxdark w-64">
-              <div className=" items-center">
-                <div>
-                  <h4 className="text-title-md text-white font-bold text-black text-xl">
-                    Doanh Thu Ngày
-                  </h4>
+              <div className="rounded-md border border-stroke bg-gradient-to-br from-[#5D69BE] to-[#C89FEB] py-10 px-6 shadow-default dark:border-strokedark dark:bg-boxdark w-64">
+                <div className=" items-center">
+                  <div>
+                    <h4 className="text-title-md text-white font-bold text-black text-xl">
+                      Doanh Thu Ngày
+                    </h4>
+                  </div>
+                  <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
+                    <img className="w-[60px]" src={""} />
+                  </div>
                 </div>
-                <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-                  <img className="w-[60px]" src={""} />
-                </div>
-              </div>
-              <div className="flex items-end justify-between mt-4">
-                <div>
-                  <h4 className="text-title-md text-white font-bold text-black text-lg">
-                    {totalRevenue?.toLocaleString()} VND
-                  </h4>
-                  <p
-                    onClick={() => {
-                      showDrawer();
-                      setAltotal(true);
-                    }}
-                    className="text-sm pt-2 font-medium underline cursor-pointer text-white"
-                  >
-                    Total views
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="rounded-md border border-stroke bg-gradient-to-br from-[#ABF8E7] to-[#9C35B6] py-10 px-6 shadow-default dark:border-strokedark dark:bg-boxdark w-64">
-              <div className="items-center">
-                <div>
-                  <h4 className="text-title-md text-white font-bold text-black text-xl">
-                    Doanh Thu Theo Lịch
-                  </h4>
-                </div>
-                <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-                  <img className="w-[60px]" src={""} />
+                <div className="flex items-end justify-between mt-4">
+                  <div>
+                    <h4 className="text-title-md text-white font-bold text-black text-lg">
+                      {totalRevenue?.toLocaleString()} VND
+                    </h4>
+                    <p
+                      onClick={() => {
+                        showDrawer();
+                        setAltotal(true);
+                      }}
+                      className="text-sm pt-2 font-medium underline cursor-pointer text-white"
+                    >
+                      Total views
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-end justify-between mt-4">
-                <div>
-                  <h4 className="text-title-md text-white font-bold text-black text-lg">
-                 {total?.toLocaleString()} VND
-                  </h4>
-                  <p
-                     onClick={() => {
-                      showDrawer();
-                      setAltotal(false);
-                    }}
-                    className="text-sm pt-2 font-medium underline cursor-pointer text-white"
-                  >
-                    Total views
-                  </p>
+              <div className="rounded-md border border-stroke bg-gradient-to-br from-[#ABF8E7] to-[#9C35B6] py-10 px-6 shadow-default dark:border-strokedark dark:bg-boxdark w-64">
+                <div className="items-center">
+                  <div>
+                    <h4 className="text-title-md text-white font-bold text-black text-xl">
+                      Doanh Thu Theo Lịch
+                    </h4>
+                  </div>
+                  <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
+                    <img className="w-[60px]" src={""} />
+                  </div>
+                </div>
+                <div className="flex items-end justify-between mt-4">
+                  <div>
+                    <h4 className="text-title-md text-white font-bold text-black text-lg">
+                      {total?.toLocaleString()} VND
+                    </h4>
+                    <p
+                      onClick={() => {
+                        showDrawer();
+                        setAltotal(false);
+                      }}
+                      className="text-sm pt-2 font-medium underline cursor-pointer text-white"
+                    >
+                      Total views
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          <div className="mb-10">
+            <HighchartsReact highcharts={Highcharts} options={columnOptions} />
           </div>
-           <div className="mb-10">
-           <HighchartsReact highcharts={Highcharts} options={columnOptions}/>
-           </div>
-          
+
           <div className="grid grid-cols-3 gap-5">
-          <div className="col-span-1 flex justify-between">
-      
-      <HighchartsReact highcharts={Highcharts} options={options} />
-      </div>
-      <div className="col-span-2">
-      <p className="flex justify-center mb-4 text-xl font-bold text-gray-800">Đơn hàng theo lịch </p>
-        <div className="">
-          
-          <Table
-            className="mt-5"
-            dataSource={dataSourceMoney}
-            columns={columnsMoney}
-            pagination={{ pageSize: 6 }}
-          />
-        </div>
-      </div>
-     
-    </div>
-          
-          
+            <div className="col-span-1 flex justify-between">
+
+              <HighchartsReact highcharts={Highcharts} options={options} />
+            </div>
+            <div className="col-span-2">
+              <p className="flex justify-center mb-4 text-xl font-bold text-gray-800">Đơn hàng theo lịch </p>
+              <div className="">
+
+                <Table
+                  className="mt-5"
+                  dataSource={dataSourceMoney}
+                  columns={columnsMoney}
+                  pagination={{ pageSize: 6 }}
+                />
+              </div>
+            </div>
+
+          </div>
+
+
           {/* theo thang */}
           {/* <HighchartsReact highcharts={Highcharts} options={columnOptions3} /> */}
           {/*  */}
           <div className="grid grid-cols-2 gap-5 mt-20">
-          
-          <div className="rounded-md shadow-md">
-  <h2 className="flex justify-center mb-4 text-xl font-bold text-gray-800">
-    Thống Kê Người Mua Gần Nhất
-  </h2>
 
-  <div className="items-center w-full">
-    <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} className=""/>
-  </div>
-</div>
-          <div className="">
-          <HighchartsReact highcharts={Highcharts} options={options2} />
+            <div className="rounded-md shadow-md">
+              <h2 className="flex justify-center mb-4 text-xl font-bold text-gray-800">
+                Thống Kê Người Mua Gần Nhất
+              </h2>
+
+              <div className="items-center w-full">
+                <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} className="" />
+              </div>
+            </div>
+            <div className="">
+              <HighchartsReact highcharts={Highcharts} options={options2} />
+            </div>
+
           </div>
-          
-          </div>
-          
+
         </div>
       )}
     </div>

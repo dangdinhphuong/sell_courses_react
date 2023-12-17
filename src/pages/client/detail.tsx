@@ -325,7 +325,7 @@ const ProductDetail = () => {
 
               </div>
               <div className="text-2xl">
-                {(productData.data.rating && productData.data.rating.length !== 0) ?
+                {(productData?.data?.rating && productData?.data?.rating.length !== 0) ?
                   <div className="flex items-center justify-center">
                     {starIcons ? starIcons : ""}
                     <span className="ml-2 text-yellow-400">

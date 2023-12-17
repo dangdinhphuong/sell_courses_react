@@ -38,6 +38,7 @@ const Lesson_video = () => {
       productId: idProduct,
       userId: idUser,
     });
+
   const [updateScore] = useUpdateCourseprogressMutation();
   const [modalVisible, setModalVisible] = useState(false);
   const [rating, setRating] = useState(0); // Đánh giá ban đầu là 0
@@ -47,6 +48,7 @@ const Lesson_video = () => {
   )
   const [durationTime, setDurationTime] = useState([]);
   const [addScore] = useAddScoreMutation();
+
   // if (!productData) {
   //   return <div>No data found for this product.</div>;
   // }
@@ -214,7 +216,7 @@ const Lesson_video = () => {
   if (!productData) {
     return <div>No data found for this product.</div>;
   }
-  const handleLessonLinkClick = async (lesson: any, index: any) => {
+  const handleLessonLinkClick = async (lessonNext: any, index: any) => {
     if (index > 0) {
       const lesson = lessons[index - 1]
       console.log("lesson", lesson);
@@ -240,32 +242,42 @@ const Lesson_video = () => {
         return
       }
     }
-    setIsActiveLesson(lesson._id)
-    const lessonId = lesson._id;
-    const lessonName = lesson.name;
+
+    setIsActiveLesson(lessonNext._id)
+    const lessonId = lessonNext._id;
+    const lessonName = lessonNext.name;
     const progressId = Courseprogress?.data?._id;
-    const storesCoreData = {
-      score: 0,
-      lessonId,
-      lessonName,
-      progressId,
-    };
+    const scoreDataCurrent = findScoreByLessonId(
+      lessonNext._id,
+      Courseprogress?.data?.scores || []
+    );
 
-    try {
-      // Gọi hàm addScore và đợi kết quả
-      const result = await addScore(storesCoreData);
+    if (!scoreDataCurrent) {
+      const storesCoreData = {
+        score: 0,
+        scoreNew: 0,
+        lessonId,
+        lessonName,
+        progressId,
+      };
 
-      if (result.error) {
-        // Xử lý trường hợp thêm dữ liệu không thành công, ví dụ, hiển thị thông báo lỗi.
-        console.error("Lỗi khi thêm dữ liệu ");
-      } else {
-        // Nếu việc thêm dữ liệu thành công, làm mới dữ liệu Courseprogress để cập nhật giao diện
-        refetchCourseProgress();
+      try {
+        // Gọi hàm addScore và đợi kết quả
+        const result = await addScore(storesCoreData);
+
+        if (result.error) {
+          // Xử lý trường hợp thêm dữ liệu không thành công, ví dụ, hiển thị thông báo lỗi.
+          console.error("Lỗi khi thêm dữ liệu ");
+        } else {
+          // Nếu việc thêm dữ liệu thành công, làm mới dữ liệu Courseprogress để cập nhật giao diện
+          refetchCourseProgress();
+        }
+      } catch (error) {
+        console.error("Đã xảy ra lỗi:", error);
       }
-    } catch (error) {
-      console.error("Đã xảy ra lỗi:", error);
     }
-    navigate(`lesson/${lesson._id}/${idUser}`)
+
+    navigate(`lesson/${lessonNext._id}/${idUser}`)
   };
 
   const VideoPlayer = ({ videoUrl: any }) => {
@@ -380,7 +392,7 @@ const Lesson_video = () => {
                             {isCompleted ? (
                               <>
                                 <BsFillCheckCircleFill className="text-green-500 mr-2" />
-                                <span className="text-green-500">Hoàn thành</span>
+                                <span className="text-green-500">Hoàn thành </span>
                               </>
                             ) : isInProgress ? (
                               <>
@@ -395,6 +407,8 @@ const Lesson_video = () => {
                                 </span>
                               </>
                             )}
+                            {scoreData?.scoreNew ? <span className="ml-2 font-semibold">Điểm mới nhất: {scoreData?.scoreNew}/100</span> : ""}
+
                           </div>
 
                         </div>

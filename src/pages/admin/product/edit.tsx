@@ -10,6 +10,8 @@ import 'react-quill/dist/quill.snow.css'
 import 'react-quill/dist/quill.bubble.css';
 const EditProduct = () => {
   const { idProduct } = useParams<{ idProduct: string }>();
+  console.log("idProduct", idProduct);
+
   const { data: productData, isLoading }: any = useGetProductByIdQuery(idProduct || "");
   const [updateProduct] = useUpdateProductMutation();
   const navigate = useNavigate();
@@ -18,12 +20,13 @@ const EditProduct = () => {
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   useEffect(() => {
     form.setFieldsValue({
-      name: productData?.data.name, 
+      name: productData?.data.name,
       price: productData?.data.price,
       img: productData?.data.img,
       description: productData?.data.description,
       categoryId: productData?.data.categoryId?._id,
       paymentContent: productData?.data.paymentContent,
+      isShowWeb: productData?.data.isShowWeb
     });
   }, [productData]);
 
@@ -44,6 +47,7 @@ const EditProduct = () => {
     formData.append("description", trimmedValues.description);
     formData.append("categoryId", trimmedValues.categoryId);
     formData.append("paymentContent", trimmedValues.paymentContent);
+    formData.append("isShowWeb", trimmedValues.isShowWeb);
 
     if (selectedImageFile) {
       formData.append('img', selectedImageFile);
@@ -170,7 +174,12 @@ const EditProduct = () => {
           </Form.Item>
 
 
-
+          <Form.Item label="Trạng thái hiển thị" name="isShowWeb" >
+            <Select>
+              <Select.Option value={0}>Hiển thị</Select.Option>
+              <Select.Option value={1}>Không hiển thị</Select.Option>
+            </Select>
+          </Form.Item>
           <Form.Item label="Nội Dung Khóa Học" name="paymentContent" className='h-36'>
             <ReactQuill
               theme='snow'
@@ -200,8 +209,9 @@ const EditProduct = () => {
             </Button>
           </Form.Item>
         </Form>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 };
 
