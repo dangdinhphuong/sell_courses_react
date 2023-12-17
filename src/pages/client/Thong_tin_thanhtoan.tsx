@@ -120,7 +120,12 @@ const Thong_tin_thanhtoan = () => {
   };
 
   const checkPaymen = async () => {
-    localStorage.setItem('infoVorcher', JSON.stringify(infoVoucherUse));
+    if(infoVoucherUse){
+      localStorage.setItem('infoVorcher', JSON.stringify(infoVoucherUse));
+    }else{
+      localStorage.setItem('infoVorcher', JSON.stringify({"discountCal": 0 }));
+    }
+    
     const orderPayment = {
       paymentMethod: "Ví điện tử",
       course: idProduct,
