@@ -21,7 +21,7 @@ const Signin = () => {
   const SET_USER = 'SET_USER';
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  
+
 
 
   function setUser(user: IUsers) {
@@ -34,8 +34,8 @@ const Signin = () => {
     window.localStorage.setItem('authInProgress', 'true');
     window.open(`http://localhost:8088/auth/google/callback`, "_self");
   };
-  
-  
+
+
   const onFinish = async (values: IUsers) => {
     try {
       const user = await signin(values).unwrap();

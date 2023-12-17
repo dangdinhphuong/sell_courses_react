@@ -255,7 +255,8 @@ function Videodetail() {
     const correctAnswers = shuffledQuizzData.filter(
       (quiz: Quiz) => quiz.isCorrect
     ).length;
-    return (correctAnswers / totalQuestions) * 100;
+    const result = correctAnswers == shuffledQuizzData.length ? 100 : Math.ceil((correctAnswers / shuffledQuizzData.length) * 100);
+    return result;
   };
   const calculateScoreHistory = useMemo(() => {
     if (dataHistory) {
@@ -263,7 +264,9 @@ function Videodetail() {
       const correctAnswers = dataHistory.filter(
         (quiz: Quiz) => quiz.isCorrect
       ).length;
-      return (correctAnswers / totalQuestions) * 100;
+      const result = correctAnswers == totalQuestions ? 100 : Math.ceil((correctAnswers / totalQuestions) * 100);
+
+      return result;
     }
   })
   const [selectedQuestion, setSelectedQuestion] = useState(null);
@@ -756,14 +759,14 @@ function Videodetail() {
                 <button
                   className="bg-[#f0f0f0] text-black font-semibold px-3 py-2 rounded-lg my-4 mr-4 text-base"
                 >
-                  Previous
+                  Câu hỏi trước
                 </button>
                 :
                 <button
                   onClick={() => setCurrentIndex((prev) => prev - 1)}
                   className="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-lg my-4 mr-4 text-base"
                 >
-                  Previous
+                  Câu hỏi trước
                 </button>
               }
               {currentIndex + 1 == shuffledQuizzData.length ?
@@ -772,14 +775,14 @@ function Videodetail() {
                   onClick={handleSubmit}
                   className="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-lg my-4 mr-4 text-base"
                 >
-                  Finish
+                  Nộp bài
                 </button>
                 :
                 <button
                   onClick={() => setCurrentIndex((prev) => prev + 1)}
                   className="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-lg my-4 mr-4 text-base"
                 >
-                  Next
+                  Câu hỏi tiếp theo
                 </button>
               }
 

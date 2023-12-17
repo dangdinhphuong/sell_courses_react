@@ -65,8 +65,8 @@ const productApi = createApi({
             invalidatesTags: ['Product'],
         }),
         updateProductShowWeb: builder.mutation<IProduct, IProduct>({
-            query: (_id, product) => ({
-                url: `/product/update-show-web/${_id}`,
+            query: (product) => ({
+                url: `/product/update-show-web`,
                 method: "POST",
                 body: product
             }),

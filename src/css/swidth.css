@@ -1,0 +1,6 @@
+.swidth-container{
+    background-color: #ccc !important;
+}
+.swidth-container:where(.css-dev-only-do-not-override-2q8sxy).ant-switch.ant-switch-checked {
+    background: #1677ff !important;
+}

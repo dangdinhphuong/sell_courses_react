@@ -1,9 +1,7 @@
 import {
   useGetProductsQuery,
   useRemoveProductMutation,
-
-
-
+  useUpdateProductShowWebMutation
 } from "@/Api/productApi";
 import { IProduct } from "@/interface/products";
 import {
@@ -17,10 +15,12 @@ import {
   Menu,
   Switch,
   Input,
-  Select
+  Select,
+  notification
 } from "antd";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import "../../../css/swidth.css";
 import { IoTrashOutline } from "react-icons/io5";
 import { AiOutlineEdit } from "react-icons/ai";
 import { FaPlus, FaSearch } from "react-icons/fa";
@@ -92,6 +92,8 @@ const Listproduct = () => {
     console.log(obj);
   };
   const { data: productData, isLoading, refetch: refetchProductData } = useGetProductsQuery(query);
+  const [updateProductShowWeb] = useUpdateProductShowWebMutation();
+
   console.log("productdata:", productData);
   const onChangeSearchName = (e) => {
     console.log(e.target.value);
@@ -128,6 +130,35 @@ const Listproduct = () => {
       }
     });
   };
+  const handleShowWeb = (_id, isShowWeb) => {
+    console.log("__________", _id, isShowWeb);
+
+    Swal.fire({
+      title: isShowWeb != 1 ? "Bạn Chắc Chắn Muốn Hiển Thị Khóa Học Này" : "Bạn Chắc Chắn Muốn Ẩn Khóa Học Này",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Đồng Ý!",
+      customClass: {
+        popup: "swal2-popup swal2-modal swal2-icon-warning swal2-show",
+      },
+    }).then((result) => {
+      if (result.isConfirmed && result.dismiss !== Swal.DismissReason.cancel) {
+        console.log("__________", _id, isShowWeb);
+        const isShow = isShowWeb != 1 ? 1 : 0
+        updateProductShowWeb({ _id, isShowWeb: isShow }).then((res) => {
+          console.log("____________res update", res);
+          notification.success({
+            message: "Thông báo",
+            description: res?.message || "Cập nhật thành công",
+            placement: 'top',
+          });
+        }
+        )
+      }
+    });
+  }
   const items = [
     {
       key: "1",
@@ -188,16 +219,8 @@ const Listproduct = () => {
       title: "Trạng thái hiển thị",
       dataIndex: "isShowWeb",
       key: "isShowWeb",
-      render: (text: any, record) => <div>
-        {text != 1 ?
-          <button className="bg-green-700 hover:bg-green-600 hover:text-white  text-white font-bold py-1 px-4 border border-green-600 rounded w-40 h-10">Hiển thị</button>
-          :
-          <button className="bg-red-700 hover:bg-red-600 hover:text-white  text-white font-bold py-1 px-4 border border-red-600 rounded w-40 h-10">Không hiển thị</button>
-
-        }
-      </div>
-      ,
-
+      render: (isShowWeb: any, record: any) =>
+        <Switch className="swidth-container" checked={isShowWeb != 1} onChange={() => handleShowWeb(record._id, isShowWeb)} checkedChildren="Show" unCheckedChildren="Hidden" />
     },
     {
       title: "",
@@ -302,7 +325,7 @@ const Listproduct = () => {
         <div className="mr-5">
           <Select
             onChange={onChangeSelect}
-            defaultValue="Tất cả"
+            placeholder="Loại khóa học"
             style={{ width: 300 }}
             options={[
               { value: '1', label: 'Tất cả' },
