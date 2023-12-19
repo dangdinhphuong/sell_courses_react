@@ -391,7 +391,7 @@ const LayoutlClinet = () => {
                 onMouseEnter={() => setIsMenuOpen(true)}
                 onMouseLeave={() => setIsMenuOpen(false)}
               >
-                <div className="text-center">
+                <div className="flex text-center">
                   {DataUser?.img ? (
                     <img
                       src={`${DataUser?.img}`}
@@ -403,7 +403,7 @@ const LayoutlClinet = () => {
                       style={{ fontSize: "32px", marginLeft: "15px" }}
                     />
                   )}
-                  <span className="ml-12">
+                  <span className="ml-2">
                   {userInfo
                     ? userInfo.data
                       ? userInfo.data.name

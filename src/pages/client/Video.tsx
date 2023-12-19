@@ -85,10 +85,7 @@ const Comment = React.memo(({ comment }: any) => {
       });
 
       message.success('Comment created successfully');
-      setComment('');
 
-      // Refresh trang sau khi bình luận
-      window.location.reload();
     } catch (error) {
       console.error('Error creating comment:', error);
     }
@@ -99,14 +96,15 @@ const Comment = React.memo(({ comment }: any) => {
   return (
     <div className="comment">
       <div className="comment-content mb-4">
-        <div className="grid grid-cols-1">
+        <div className="flex grid-cols-1">
           <div className="avatar-container1">
-            <img src={comment.user?.img} alt="" />
+            <img src={comment.user?.img ? comment.user?.img  : 'https://img.myloview.com/posters/default-avatar-profile-icon-vector-social-media-user-photo-700-205577532.jpg'} alt="" />
           </div>
           <div className="flex-col items-end">
             <div className="flex flex-col items-start flex1">
               <p className="font-bold text-xs">{comment.user?.name}</p>
               <p>{comment?.name}</p>
+              <p>{ vsv}</p>
             </div>
             <div
               className="text-xs text-xs1 font-serif mt-1"
@@ -154,6 +152,7 @@ function Videodetail() {
   const [createCommentI] = useCreateCommentMutation();
   const [shuffledQuizzData, setShuffledQuizzData] = useState<Quiz[]>([]);
   const [demo, setDemo] = useState<any[]>([]);
+  const [statusCmtt, setStatusCmtt] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [showRetryButton, setShowRetryButton] = useState(false);
   const [comment, setComment] = useState("");
@@ -179,8 +178,10 @@ function Videodetail() {
       );
     };
     handelFetchCOmment();
-  }, []);
-
+  }, [statusCmtt]);
+  useEffect(() => {
+    if (isShowTest) setIsShowTest(false)
+  }, [idLesson])
   const { idUser } = useParams<{ idUser: string }>();
   const { data: Courseprogress, refetch: refetchCourseProgress } = useGetCourseprogressByIdQuery({
     productId: idProduct,
@@ -414,7 +415,6 @@ function Videodetail() {
     //   if (idintervel) {
     //     video.currentTime <= 
     //   }
-
     // }
     // Lưu thời điểm hiện tại để so sánh lần sau
     // console.log("reached90PercentRef________", reached90PercentRef);
@@ -470,11 +470,9 @@ function Videodetail() {
     }
   };
   const openModal = () => {
-    console.log("scoreData__________", scoreData, scoreData?.statusVideo, reached90PercentRef);
-
     if (scoreData?.statusVideo === "hoàn thành video" || reached90PercentRef) {
       if (currentIndex != 0) setCurrentIndex(0)
-      handleRetry()
+      handleRetry();
       setIsShowTest(true);
     } else {
       notification.warning({
@@ -519,9 +517,9 @@ function Videodetail() {
   // NoteLesson
   useEffect(() => {
     // Nạp danh sách ghi chú khi nó thay đổi
+    
     if (notesData) {
-      console.log(notesData);
-
+    
       setNoteList(notesData);
     }
   }, [notesData]);
@@ -582,7 +580,8 @@ function Videodetail() {
             title: lessonData?.data.name || "",
             content: noteContentHTML,
             video: lessonData?.data.video || "",
-            minute: currentTime
+            minute: currentTime,
+            userId: idUser
           };
 
           try {
@@ -592,7 +591,6 @@ function Videodetail() {
             setIsEditingNote(false);
             setNoteContent("");
             openNotificationDSave("bottomLeft");
-            console.log(openNotificationDSave);
           } catch (error) {
             console.error("Error adding new note:", error);
           }
@@ -637,7 +635,6 @@ function Videodetail() {
 
           // Hiển thị thông báo sau khi xóa thành công
           openNotificationDelete("bottomLeft");
-          console.log(openNotificationDelete);
         }
       } catch (error) {
         console.error("Lỗi khi xóa ghi chú:", error);
@@ -691,8 +688,8 @@ function Videodetail() {
     })
       .unwrap()
       .then((rep: any) => {
-        let demoNews = [...demo, rep]
-        setDemo(demoNews)
+        setComment('');
+        setStatusCmtt(rep);
       });
   };
   const uniqueComments = (comments) => {
@@ -925,10 +922,11 @@ function Videodetail() {
                   >
                     <ul className="">
                       {noteList.map((note: any, index: any) => {
+                        console.log(note);
                         return (
                           <li
                             key={index}
-                            className="mx-1 my-6 border-b-2 border-gray-300 pb-4"
+                            className={note.userId && note.userId == idUser ? 'mx-1 my-6 border-b-2 border-gray-300 pb-4' : 'hidden mx-1 my-6 border-b-2 border-gray-300 pb-4'}
                           >
 
                             <div className="">
@@ -1287,13 +1285,14 @@ function Videodetail() {
               <div className="mt-4">
                 <div className="flex items-start space-x-2">
                   <div className="avatar-container">
-                    <img src={userInfo.userData.img} alt="" />
+                    <img src={userInfo.userData.img ? userInfo.userData.img : 'https://img.myloview.com/posters/default-avatar-profile-icon-vector-social-media-user-photo-700-205577532.jpg'} alt="" />
                     <p className="font-semibold">{userInfo.userData.name}</p>
                   </div>
                 </div>
 
                 <form onSubmit={handelCreateComment}>
                   <input
+                    value={comment}
                     onChange={(event: any) => setComment(event.target.value)}
                     className="mt-2 w-full h-10 rounded-lg border-2 pl-3 outline-none border-gray-300 "
                     placeholder="Viết bình luận của bạn..."
