@@ -46,7 +46,7 @@ const PaymentSuccess = () => {
 
 if (localStorage.getItem("infoVorcher")) {
   infoVorcher = JSON.parse(localStorage.getItem("infoVorcher"));
- 
+
 } else {
   infoVorcher = {
     "discountCal": 0
@@ -150,9 +150,10 @@ console.log("infoVorcher",infoVorcher);
     } else {
       if (getParam('vnp_TxnRef')) {
         // const [removeOrder] = useRemoveOrderMutation();
+        navigate("/Thongtinthanhtoan/"+idProduct)
         notification.error({
           message: 'error',
-          description: 'Course payment failed!',
+          description: 'Thanh toán thất bại!',
         });
         // removeUrlParameters();
       }
