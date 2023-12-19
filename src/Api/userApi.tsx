@@ -1,6 +1,7 @@
 import { IProductApiResponseUser, IUsers } from '@/interface/user';
 import { pause } from '@/utils/pause';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import {IProduct} from "@/interface/products";
 
 const userApi = createApi({
     reducerPath: 'user',
@@ -40,14 +41,23 @@ const userApi = createApi({
             }),
             invalidatesTags: ['User']
         }),
-        updateUser: builder.mutation<IUsers, IUsers>({
-            query: (user) => ({
+        updateUser: builder.mutation<IUsers, { user: IUsers; formData: FormData }>({
+            query: ({ user, formData }) => ({
                 url: `/user/${user._id}`,
                 method: "PUT",
-                body: user
+                body: formData, // Sử dụng formData làm nội dung yêu cầu
             }),
-            invalidatesTags: ['User']
+            invalidatesTags: ['User'],
         }),
+
+        // updateUser: builder.mutation<IUsers, IUsers>({
+        //     query: (user) => ({
+        //         url: `/user/${user._id}`,
+        //         method: "PUT",
+        //         body: user
+        //     }),
+        //     invalidatesTags: ['User']
+        // }),
         Login: builder.mutation<IUsers, IUsers>({
             query: (user) => ({
                 url: `/Signin`,

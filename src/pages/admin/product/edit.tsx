@@ -52,7 +52,10 @@ const EditProduct = () => {
     if (selectedImageFile) {
       formData.append('img', selectedImageFile);
     }
-    console.log(formData);
+    console.log('values', values);
+    console.log('trimmedValues', trimmedValues);
+    console.log('selectedImageFile', selectedImageFile);
+    console.log('formData', formData);
 
     const productData = {
       _id: idProduct,

@@ -5,8 +5,8 @@ import {
 import { useGetCategorysQuery } from "@/Api/categoryApi";
 import { Category } from "@/interface/categorys";
 import { IProduct } from "@/interface/products";
-import { Button, Form, Input, Skeleton, Select } from "antd";
-import { useEffect } from "react";
+import {Button, Form, Input, Skeleton, Select, Image, notification} from "antd";
+import React, {useEffect, useState} from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetOneUserQuery, useUpdateUserMutation } from "@/Api/userApi";
@@ -19,39 +19,79 @@ type FieldType = {
 };
 const EditUser = () => {
   const { idUser } = useParams<{ idUser: string }>();
-  const { data: productData, isLoading } = useGetOneUserQuery(idUser || "");
-  const [updateProduct] = useUpdateUserMutation();
+  const { data: userData, isLoading }: any = useGetOneUserQuery(idUser || "");
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [updateUser] = useUpdateUserMutation();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  console.log("pro: ",productData);
+  console.log("pro: ",userData);
 
   useEffect(() => {
     form.setFieldsValue({
-      name: productData?.name,
-      email: productData?.email,
-      img: productData?.img,
-      phoneNumber: productData?.phoneNumber,
+      name: userData?.name,
+      email: userData?.email,
+      img: userData?.img,
+      phoneNumber: userData?.phoneNumber,
     });
-  }, [productData]);
+  }, [userData]);
 
   // const dataSource = categoryData?.map(({ _id, name,email }: IUsers) => ({
   //     key: _id,
+
+
+
   //     name,
   //     email,
   // }))
 
-  const onFinish = (values: IUsers) => {
-    updateProduct({ ...values, _id: idUser})
-      .unwrap()
-      .then(() => navigate("/admin/user"));
-  };
+  const onFinish = (values: any) => {
+    const trimmedValues: any = {
+      name: typeof values.name === 'string' ? values.name.trim() : values.name,
+      email: typeof values.email === 'string' ? values.email.trim() : values.email,
+      phoneNumber: typeof values.phoneNumber === 'string' ? values.phoneNumber.trim() : values.phoneNumber,
+    };
 
+    const formData: any = new FormData();
+    formData.append('name', trimmedValues.name);
+    formData.append('email', trimmedValues.email);
+    formData.append('phoneNumber', trimmedValues.phoneNumber);
+
+    if (selectedImageFile) {
+      formData.append('img', selectedImageFile);
+    }
+
+    const userData = {
+      _id: idUser,
+      ...values,
+    };
+    console.log('values', values);
+    console.log('trimmedValues', trimmedValues);
+    console.log('selectedImageFile', selectedImageFile);
+    console.log('formData', formData);
+    updateUser({ user: userData, formData: formData })
+        .unwrap()
+        .then(() => navigate('/admin/user')); // Chuyển hướng sau khi cập nhật
+    notification.success({
+      message: 'Success',
+      description: 'User edit successfully!',
+    });
+  };
+  const handleImageChange = (event: any) => {
+    const file = event.target.files[0];
+    setSelectedImageFile(file);
+
+    // Cập nhật giá trị "img" trong "values" khi chọn tệp tin mới
+    form.setFieldsValue({
+      ...form.getFieldsValue(),
+      img: file, // Sử dụng "file" thay vì giá trị "img" cũ
+    });
+  };
 
   return (
     <div>
       <header className="mb-4">
         <h2 className="font-bold text-2xl">
-          Sửa Lại Người Dùng : {productData?.name}
+          Sửa Lại Người Dùng : {userData?.name}
         </h2>
       </header>
       {isLoading ? (
@@ -99,22 +139,22 @@ const EditUser = () => {
                   return Promise.resolve();
                 },
               },
-             
+
             ]}
           >
             <Input />
           </Form.Item>
-          
-          <Form.Item<FieldType>
-            label="Ảnh"
-            name="img"
-            rules={[
-              { required: true, message: "Vui lòng nhập !" },
-             
-             
-            ]}
+
+          <Form.Item
+              label="Ảnh"
+              name="img"
+              rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
           >
-            <Input />
+            <Image
+                width={150}
+                src={selectedImageFile ? URL.createObjectURL(selectedImageFile) : userData?.img}
+            />
+            <input type="file" accept="image/*" onChange={handleImageChange} />
           </Form.Item>
 
           <Form.Item<FieldType>
@@ -135,10 +175,10 @@ const EditUser = () => {
           >
             <Input />
           </Form.Item>
-          {/* 
+          {/*
                     <Form.Item label="category" name="categoryId"
                     rules={[
-                        { required: true, message: "Vui lòng nhập category!" },                   
+                        { required: true, message: "Vui lòng nhập category!" },
                     ]}
                     >
                         <Select>
