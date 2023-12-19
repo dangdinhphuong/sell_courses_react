@@ -19,6 +19,7 @@ import {
 } from "react-router-dom";
 import * as XLSX from "xlsx";
 import moment from "moment";
+import { formatDate } from "@/utils/formats"
 
 export const exportToExcel = (data: any, fileName: any) => {
   console.log(data, "dataa");
@@ -397,7 +398,7 @@ const Dashboard = () => {
       key: "orderDate",
       render: (text: any) => {
         const db = text.split("T");
-        return <p>{db[0]}</p>;
+        return <p> {formatDate(db[0],"DD-MM-YYYY")}</p>;
       },
     },
   ];
@@ -525,7 +526,7 @@ const Dashboard = () => {
       dataIndex: "orderDate",
       key: "orderDate",
       render: (data: string) => {
-        return <p>{data.split("T")[0]}</p>;
+        return <p>{formatDate(data.split("T")[0], "DD-MM-YYYY")}</p>;
       },
     },
   ];

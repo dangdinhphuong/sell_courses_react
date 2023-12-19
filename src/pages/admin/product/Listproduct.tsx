@@ -98,7 +98,7 @@ const Listproduct = () => {
   const onChangeSearchName = (e) => {
     console.log(e.target.value);
     setQuery((prev) => {
-      return { ...prev, q: e.target.value }
+      return { ...prev, q: e.target.value.trim() }
     })
   }
   const onChangeSelect = (val) => {

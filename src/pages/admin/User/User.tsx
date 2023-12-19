@@ -189,19 +189,19 @@ const User = (props: Props) => {
   const onChangeSearchName = (e) => {
     console.log(e.target.value);
     setQuery((prev) => {
-      return { ...prev, q: e.target.value }
+      return { ...prev, q: e.target.value.trim() }
     })
   }
   const onChangeSearchPhone = (e) => {
     console.log(e.target.value);
     setQuery((prev) => {
-      return { ...prev, phoneNumber: e.target.value }
+      return { ...prev, phoneNumber: e.target.value.trim() }
     })
   }
   const onChangeSearchEmail = (e) => {
     console.log(e.target.value);
     setQuery((prev) => {
-      return { ...prev, email: e.target.value }
+      return { ...prev, email: e.target.value.trim() }
     })
   }
   const onChangeSelect = (val) => {
