@@ -174,16 +174,24 @@ const Lesson_video = () => {
     const calculateTotalDuration = async () => {
 
       // Lặp qua danh sách video và lấy thời lượng từng video
-      for (const lesson of lessons) {
+      for (let index = 0; index < lessons.length; index++) {
+        const lesson = lessons[index];
         try {
           const video = document.createElement('video');
           video.src = lesson.video;
+          console.log("lesson.video___________", lesson.video, index);
+          
           video.addEventListener('loadedmetadata', () => {
             total += video.duration;
 
             // Cập nhật state chỉ khi component được mount
             if (mounted) {
-              setDurationTime(prev => [...prev, video.duration])
+              const dataDuration = durationTime
+              dataDuration[index] = video.duration
+              setDurationTime(dataDuration)
+              
+              console.log("duration.video___________", video.duration, index);
+
               setTotalDuration(total);
             }
           });
@@ -192,6 +200,7 @@ const Lesson_video = () => {
           console.error('Error calculating video duration:', error);
         }
       }
+     
       console.log("total_______", total);
 
       // Cập nhật state chỉ khi component được mount
