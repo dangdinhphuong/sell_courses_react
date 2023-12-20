@@ -25,7 +25,7 @@ import { isEmpty } from "@/utils/validate"
 const ProductDetail = () => {
   const data: any = localStorage.getItem("userInfo");
   const orderId: any = localStorage.getItem("orderId");
-  const checkUser = JSON.parse(data).userData;
+  const checkUser = JSON.parse(data).userData?? "";
   console.log(checkUser);
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
   const idUser = userInfo.userData?._id || "";

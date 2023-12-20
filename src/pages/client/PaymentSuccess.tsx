@@ -44,15 +44,17 @@ const PaymentSuccess = () => {
   let paymentCode: string | null = '';
   let infoVorcher: any;
 
-if (localStorage.getItem("infoVorcher")) {
-  infoVorcher = JSON.parse(localStorage.getItem("infoVorcher"));
-
-} else {
-  infoVorcher = {
-    "discountCal": 0
+  if (JSON.parse(localStorage.getItem("infoVorcher")) &&
+    typeof JSON.parse(localStorage.getItem("infoVorcher")) === 'object' &&
+    Object.keys(JSON.parse(localStorage.getItem("infoVorcher"))).length !== 0) {
+    infoVorcher = JSON.parse(localStorage.getItem("infoVorcher"));
+  } else {
+    localStorage.setItem('infoVorcher', JSON.stringify({ "discountCal": 0 }));
+    infoVorcher = {
+      "discountCal": 0
+    }
   }
-}
-console.log("infoVorcher",infoVorcher);
+  console.log("infoVorcher", infoVorcher);
   const showDrawer = () => {
     setOpen(true);
   };
@@ -150,7 +152,7 @@ console.log("infoVorcher",infoVorcher);
     } else {
       if (getParam('vnp_TxnRef')) {
         // const [removeOrder] = useRemoveOrderMutation();
-        navigate("/Thongtinthanhtoan/"+idProduct)
+        navigate("/Thongtinthanhtoan/" + idProduct)
         notification.error({
           message: 'error',
           description: 'Thanh toán thất bại!',
@@ -161,7 +163,7 @@ console.log("infoVorcher",infoVorcher);
   };
 
   if (count == 1) {
-      checkPayment();
+    checkPayment();
     //  removeUrlParameters();
   }
 

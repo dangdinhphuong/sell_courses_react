@@ -37,7 +37,7 @@ const Thong_tin_thanhtoan = () => {
   const [isRequesting, setIsRequesting] = useState(false);
   const [queryParameters] = useSearchParams();
   const [infoVoucherUse, setInfoVoucherUse] = useState(Object);
-  const [vorcherUse , setVorcherUse] = useState('');
+  const [vorcherUse, setVorcherUse] = useState('');
   const [open, setOpen] = useState(false);
   const vouche: string | null = queryParameters.get("vouche");
   const voucheId: string | null = queryParameters.get("voucheId");
@@ -57,16 +57,16 @@ const Thong_tin_thanhtoan = () => {
   const dataPageQuery: string | null = queryParameters.get(
     "vnp_ResponseCode=00"
   );
-  const handleDiscount = (voucher: any , index: any) => {
-    if(voucher.type){
+  const handleDiscount = (voucher: any, index: any) => {
+    if (voucher.type) {
       let discountCal = (voucher.sale / 100) * productData?.data.price;
       setDisCount(discountCal);
       setVorcherUse(voucher?._id);
-      setInfoVoucherUse({voucher , discountCal: discountCal,voucherId: voucher?._id})
-    }else{
+      setInfoVoucherUse({ voucher, discountCal: discountCal, voucherId: voucher?._id })
+    } else {
       setDisCount(voucher.sale);
       setVorcherUse(voucher?._id);
-      setInfoVoucherUse({voucher , discountCal: voucher.sale,voucherId: voucher?._id})
+      setInfoVoucherUse({ voucher, discountCal: voucher.sale, voucherId: voucher?._id })
     }
   }
 
@@ -97,15 +97,15 @@ const Thong_tin_thanhtoan = () => {
   }, [done, orderId]);
 
   const handelPayMentVNPay = async () => {
-    const orderId = localStorage.getItem("orderId")?? "";
+    const orderId = localStorage.getItem("orderId") ?? "";
     console.log(productData?.data.price - disCount);
     await axios
       .post(`http://localhost:8088/api/create-payment-vnpay`, {
         user: checkUser?._id as string,
         name: checkUser?.name,
         od: "done",
-        id:orderId,
-        voucheId: infoVoucherUse.voucher ? infoVoucherUse.voucher._id : "Thanh toan đơn", 
+        id: orderId,
+        voucheId: infoVoucherUse.voucher ? infoVoucherUse.voucher._id : "Thanh toan đơn",
         total: vouche
           ? String(productData?.data.price - disCount)
           : productData?.data.price - disCount,
@@ -121,12 +121,14 @@ const Thong_tin_thanhtoan = () => {
   };
 
   const checkPaymen = async () => {
-    if(infoVoucherUse){
+    if (
+      infoVoucherUse &&
+      typeof infoVoucherUse === 'object' &&
+      Object.keys(infoVoucherUse).length !== 0) {
       localStorage.setItem('infoVorcher', JSON.stringify(infoVoucherUse));
-    }else{
-      localStorage.setItem('infoVorcher', JSON.stringify({"discountCal": 0 }));
+    } else {
+      localStorage.setItem('infoVorcher', JSON.stringify({ "discountCal": 0 }));
     }
-    
     const orderPayment = {
       paymentMethod: "Ví điện tử",
       course: idProduct,
@@ -155,7 +157,7 @@ const Thong_tin_thanhtoan = () => {
     localStorage.setItem("order", JSON.stringify(orderPayment));
     handelCheckVouche();
     // handelUpdateVouche();
-   return handelPayMentVNPay();
+    return handelPayMentVNPay();
   };
 
   return (
@@ -186,36 +188,36 @@ const Thong_tin_thanhtoan = () => {
               nắm kiến thức nền tảng vô cùng chắc chắn.
             </p>
             <div className="mt-4">
-              {dataUSer?.voucher?.map((items: any , index: any) => (
-              <div key={items?._id}>
-                <div className={vorcherUse && vorcherUse != items?._id ? 'opacity-75 flex items-center justify-between bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-md mb-2' : 'flex items-center justify-between bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-md mb-2'}>
-                  <p className="p-3 bg-red-600 text-white rounded-md m-3">{items.code} - {items.type ?  items.sale + '%' 
-                  : new Intl.NumberFormat("vi-VN", {
+              {dataUSer?.voucher?.map((items: any, index: any) => (
+                <div key={items?._id}>
+                  <div className={vorcherUse && vorcherUse != items?._id ? 'opacity-75 flex items-center justify-between bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-md mb-2' : 'flex items-center justify-between bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-md mb-2'}>
+                    <p className="p-3 bg-red-600 text-white rounded-md m-3">{items.code} - {items.type ? items.sale + '%'
+                      : new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
                       }).format(Number(items.sale))}</p>
-                  <div className="flex">
-                    <Button
-                      disabled={vorcherUse}
-                      onClick={() => {
-                        handleDiscount(items, index);
-                      }}
-                      className="mr-3"
-                    >
-                      <span className="font-bold">{vorcherUse == items?._id ? 'Đã sử dụng' : 'Sử dụng'}</span>
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        handleRemoveDiscount();
-                      }}
-                      className={vorcherUse != items?._id ? 'hidden mr-3' : 'mr-3'}
-                    >
-                      <span className="font-bold">Bỏ voucher</span>
-                    </Button>
+                    <div className="flex">
+                      <Button
+                        disabled={vorcherUse}
+                        onClick={() => {
+                          handleDiscount(items, index);
+                        }}
+                        className="mr-3"
+                      >
+                        <span className="font-bold">{vorcherUse == items?._id ? 'Đã sử dụng' : 'Sử dụng'}</span>
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          handleRemoveDiscount();
+                        }}
+                        className={vorcherUse != items?._id ? 'hidden mr-3' : 'mr-3'}
+                      >
+                        <span className="font-bold">Bỏ voucher</span>
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
             </div>
             <div className="bg-[#202425] p-4 rounded-lg mt-6 space-y-4 ">
               <p className="ml-2 text-white ">
@@ -243,17 +245,17 @@ const Thong_tin_thanhtoan = () => {
                 <span className="text-[#52eeee] text-[18px] font-bold ml-10">
                   {vouche ? (
                     <p>
-                     {new Intl.NumberFormat("vi-VN", {
-                       style: "currency",
-                       currency: "VND",
-                     }).format(Number(productData?.data.price - disCount))}
-                   </p>
+                      {new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(Number(productData?.data.price - disCount))}
+                    </p>
                   ) : (
                     <p>
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
-                      }).format(productData?.data.price-disCount)}
+                      }).format(productData?.data.price - disCount)}
                     </p>
                   )}
                 </span>
