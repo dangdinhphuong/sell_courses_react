@@ -150,17 +150,6 @@ const PaymentSuccess = () => {
       return true;
 
     } else {
-<<<<<<< HEAD
-      if (getParam('vnp_TxnRef')) {
-        // const [removeOrder] = useRemoveOrderMutation();
-        navigate("/Thongtinthanhtoan/" + idProduct)
-        notification.error({
-          message: 'error',
-          description: 'Thanh toán thất bại!',
-        });
-        // removeUrlParameters();
-      }
-=======
       if (localStorage.getItem("infoVorcher")) {
         localStorage.removeItem("infoVorcher");
       } 
@@ -179,7 +168,6 @@ const PaymentSuccess = () => {
         message: 'error',
         description: 'Thanh toán thất bại!',
       });
->>>>>>> bbd53a801f3abe9a426620ec75561860f89a0d9f
     }
   };
 
