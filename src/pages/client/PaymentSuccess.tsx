@@ -150,6 +150,7 @@ const PaymentSuccess = () => {
       return true;
 
     } else {
+<<<<<<< HEAD
       if (getParam('vnp_TxnRef')) {
         // const [removeOrder] = useRemoveOrderMutation();
         navigate("/Thongtinthanhtoan/" + idProduct)
@@ -159,6 +160,26 @@ const PaymentSuccess = () => {
         });
         // removeUrlParameters();
       }
+=======
+      if (localStorage.getItem("infoVorcher")) {
+        localStorage.removeItem("infoVorcher");
+      } 
+
+      // Lấy thông tin về URL hiện tại
+          const currentUrl = window.location.href;
+
+          // Tạo đường dẫn
+          const pathReturn = "/Thongtinthanhtoan/" + idProduct;
+          // Tạo URL mới từ domain của URL hiện tại và đường dẫn
+          const newUrl = `${currentUrl.split('/')[0]}${pathReturn}`;
+
+          // Load trang mới
+          window.location.href = newUrl;
+      notification.error({
+        message: 'error',
+        description: 'Thanh toán thất bại!',
+      });
+>>>>>>> bbd53a801f3abe9a426620ec75561860f89a0d9f
     }
   };
 

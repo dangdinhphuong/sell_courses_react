@@ -23,10 +23,8 @@ import axios from "axios";
 import { useAddOrderMutation } from "@/Api/order";
 import { isEmpty } from "@/utils/validate"
 const ProductDetail = () => {
-  const data: any = localStorage.getItem("userInfo");
+  const data: any = localStorage.getItem("userInfo") ?? false;
   const orderId: any = localStorage.getItem("orderId");
-  const checkUser = JSON.parse(data).userData?? "";
-  console.log(checkUser);
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
   const idUser = userInfo.userData?._id || "";
   console.log(userInfo);
@@ -124,7 +122,7 @@ const ProductDetail = () => {
   };
 
   const onFinish = async () => {
-    if (!idUser) {
+    if (!data) {
       alert("Bạn phải đăng nhập tài khoản để đăng ký khóa học");
       navigate("/signin");
     } else {
@@ -173,7 +171,6 @@ const ProductDetail = () => {
         <button
           className="bg-[#FD661F] text-white ml-16 mt-4 px-4 w-48 py-2 rounded-full hover:bg-white border-2 border-[#FD661F] hover:border-solid hover:border-2 hover:border-[#FD661F] hover:text-[#FD661F] text-center font-bold"
           onClick={() => {
-            checkPaymen();
             handleStartCourse();
           }}
         >

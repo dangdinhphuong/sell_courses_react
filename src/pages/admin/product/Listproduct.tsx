@@ -297,15 +297,6 @@ const Listproduct = () => {
 
       <header className="mb-4 flex justify-between items-center">
         <h2 className="font-bold text-2xl">Quản lý khóa học</h2>
-        <button className="bg-green-700 hover:bg-green-600 hover:text-white  text-white font-bold py-1 px-4 border border-green-600 rounded w-48 h-10 flex items-center">
-          <Link
-            to="/admin/product/add"
-            className="flex items-center space-x-1  hover:text-white justify-center text-sm"
-          >
-            <FaPlus></FaPlus>
-            <span>Thêm khóa học mới</span>
-          </Link>
-        </button>
         <Button
           className=" w-32 h-10"
           type="primary"
@@ -317,27 +308,40 @@ const Listproduct = () => {
         </Button>
 
       </header>
-      <div className="flex mb-5 mt-10">
-        <div className="mr-5">
-          <Input allowClear onChange={onChangeSearchName} style={{ width: 300 }}
-            placeholder="Tìm kiếm khóa học" />
+      <div className="flex justify-between mb-5 mt-10">
+        <div className="flex">
+            <div className="mr-5">
+            <Input allowClear onChange={onChangeSearchName} style={{ width: 300 }}
+                placeholder="Tìm kiếm khóa học" />
+            </div>
+            <div className="mr-5">
+              <Select
+                onChange={onChangeSelect}
+                placeholder="Loại khóa học"
+                style={{ width: 300 }}
+                options={[
+                  { value: '1', label: 'Tất cả' },
+                  { value: '2', label: 'Miễn Phí' },
+                  { value: '3', label: 'Có phí' },
+                ]}
+              />
+            </div>
+            <button onClick={handleFilter} className="bg-green-700 hover:bg-green-600 hover:text-white  text-white font-bold py-1 px-4 border border-green-600 rounded flex items-center">
+              <FaSearch></FaSearch>
+              <span className="ml-1">Tìm kiếm</span>
+            </button>
         </div>
-        <div className="mr-5">
-          <Select
-            onChange={onChangeSelect}
-            placeholder="Loại khóa học"
-            style={{ width: 300 }}
-            options={[
-              { value: '1', label: 'Tất cả' },
-              { value: '2', label: 'Miễn Phí' },
-              { value: '3', label: 'Có phí' },
-            ]}
-          />
+        <div className="">
+          <button className="bg-green-700 hover:bg-green-600 hover:text-white  text-white font-bold py-2 px-2 border border-green-600 rounded  flex items-center">
+            <Link
+              to="/admin/product/add"
+              className="flex items-center space-x-1  hover:text-white justify-center text-sm"
+            >
+              <FaPlus></FaPlus>
+              <span>Thêm khóa học mới</span>
+            </Link>
+          </button>
         </div>
-        <button onClick={handleFilter} className="bg-green-700 hover:bg-green-600 hover:text-white  text-white font-bold py-1 px-4 border border-green-600 rounded flex items-center">
-          <FaSearch></FaSearch>
-          <span className="ml-1">Tìm kiếm</span>
-        </button>
       </div>
       {isRemoveSuccess && <Alert message="Xóa Thành Công!" type="success" />}
       {isLoading ? (
